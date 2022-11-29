@@ -1,0 +1,10 @@
+{
+  "name": "sampe",
+  "short_name": "sample",
+  "theme_color": "#2196f3",
+  "background_color": "#2196f3",
+  "display": "standalone",
+  "scope": "/public",
+  "start_url": "/public/index.html",
+  "gcm_sender_id": "103953800507"
+}
