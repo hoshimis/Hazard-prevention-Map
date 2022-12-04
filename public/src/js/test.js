@@ -1,5 +1,5 @@
-'use strict'
-import '../styles/style.css'
+"use strict";
+import "../styles/style.css";
 // import { setupCounter } from './counter.js'
 // import javascriptLogo from './public/images/javascript.svg'
 

@@ -7,6 +7,10 @@
 magnifest.json はサイトのルートディレクトリに設置  
 サイトの head タグ内に magnifest.json の位置を記載しておく必要がある
 
+### パス
+
+[manifest.json](../public/manifest.json)
+
 ### それぞれの項目の説明
 
 | 項目名           | 説明                                                                                                       |

@@ -7,7 +7,6 @@
  * @see https://developers.google.com/web/fundamentals/codelabs/your-first-pwapp/?hl=ja
  *  */
 
-'use strict'
 // import env from 'dotenv'
 // env.config()
 
