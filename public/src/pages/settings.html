@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <link rel="stylesheet" href="../style/main.css">
+    <link rel="stylesheet" href="../style/settings.css">
+    <link href="https://use.fontawesome.com/releases/v6.2.1/css/all.css" rel="stylesheet">
+    <title>Setting</title>
+</head>
+
+<body>
+    <header class="navbar navbar-expand-md navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="/">app title</a>
+
+            <button class="navbar-toggler mr-auto" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="./settings.html">
+                            <i class="fa-solid fa-gear fa-lg fa-fw fa-spin"></i>
+                            setting
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./settings.html">
+                            <i class="fa-solid fa-gear fa-lg fa-fw fa-spin"></i>
+                            setting
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./settings.html">
+                            <i class="fa-solid fa-gear fa-lg fa-fw fa-spin"></i>
+                            setting
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="section-notification">
+            <div class="container">
+                <div class="title">
+                    <h3 class="notification-title">プッシュ通知</h3>
+                    <p class="lead">
+                        ONにすると、被害があった場所に近づいた時にプッシュ通知を送信します。
+                    </p>
+                </div>
+                <div class="btn-toolbar">
+                    <div class="btn-group">
+                        <input class="btn-check notification-input" type="checkbox" id="btn_check">
+                        <label class="btn btn-primary" for="btn_check" id="btn_check_label"
+                            style="width:5rem">Off</label>
+                        <button type="button" class="btn btn-secondary btn-lg col-auto ms-auto"
+                            onclick="sendPushNotification()">テスト</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+    <script>
+        (function () {
+            document.getElementById('btn_check').addEventListener('click', function (e) {
+                document.getElementById('btn_check_label').innerText = this.checked ? "On" : "Off";
+            });
+        })();
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/0.0.11/push.min.js"></script>
+    <script src="../js/push.js"></script>
+</body>
+
+</html>
