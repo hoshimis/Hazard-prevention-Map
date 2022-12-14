@@ -22,52 +22,49 @@ var initMap = () => {
   const marker = new google.maps.Marker({
     map: map,
     position: latLng,
-    title: '名古屋駅！！'
+
+    title: '名古屋駅！！',
+    class: 'fff/'
   })
 
-  // URLを取得
-  let url = new URL(window.location.href)
-  // URLSearchParamsオブジェクトを取得
-  let params = url.searchParams
+  // クリックイベントを追加
+  map.addListener('click', function (e) {
+    console.log(e.latLng.lat())
+    console.log(e.latLng.lng())
+    getAddress(e.latLng)
+    var lat = document.getElementById('lat')
+    var lng = document.getElementById('lng')
 
-  // getメソッド
-  const origin = params.get('origin')
-  const destination = params.get('destination')
-
-  // 現在地と宛先のパラメタがあったならば
-  if (origin !== null && destination !== null) {
-    directionMap(origin, destination)
-  }
+    lat.value = e.latLng.lat();
+    lng.value = e.latLng.lng();
+  })
 }
 
-/**
- * @author 小池将弘
- * @function directionMap 現在位置から指定位置までの道順を表示する。
- */
-
-// directionApi
-const directionMap = (origin, destination) => {
-  //https://softauthor.com/google-maps-directions-service/
-  const directionsService = new google.maps.DirectionsService()
-  const directionsRenderer = new google.maps.DirectionsRenderer()
-
-  //directionsRenderer と地図を紐付け
-  directionsRenderer.setMap(map)
-
-  directionsService.route(
+function getAddress(latlng) {
+  // ジオコーダのコンストラクタ
+  var geocoder = new google.maps.Geocoder()
+  let address
+  
+  // geocodeリクエストを実行。
+  // 第１引数はGeocoderRequest。緯度経度⇒住所の変換時はlatLngプロパティを入れればOK。
+  // 第２引数はコールバック関数。
+  geocoder.geocode(
     {
-      origin: origin,
-      destination: destination,
-      travelMode: 'WALKING' // 固定
+      latLng: latlng
     },
-    (response, status) => {
-      console.log(response) //JSONの中身はここを見てね。
-      console.log(status)
-      if (status === 'OK') {
-        directionsRenderer.setDirections(response) //取得したルート（結果：result）をセット
+    function (results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        // results.length > 1 で返ってくる場合もありますが・・・。
+        if (results[0].geometry) {
+          // 住所を取得(日本の場合だけ「日本, 」を削除)
+          address = results[0].formatted_address.replace(/^日本, /, '')
+          const place = document.getElementById('place')
+          place.value = address
+        }
       }
     }
   )
+
 }
 
 /**
@@ -89,8 +86,12 @@ const getJSON = () => {
   req.onreadystatechange = () => {
     if (req.readyState == 4 && req.status == 200) {
       const data = JSON.parse(req.responseText)
-
-      map = new google.maps.Map(document.getElementById('map'), options)
+      const latlng = new google.maps.LatLng(35.6811673, 139.7670516)
+      const options = {
+        zoom: 15, //地図の縮尺値を設定する
+        center: latlng //地図の中心座標を設定する
+      }
+      const map = new google.maps.Map(document.getElementById('map'), options)
 
       // JSON のデータ数分処理
       for (let i = 0; i < data.marker.length; i++) {

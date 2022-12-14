@@ -83,3 +83,4 @@ app.post('/messages', async (request, response) => {
 // exports.app = functions.https.onRequest(app)
 const port = '8080'
 app.listen(port, () => console.log(`app start listening on port ${port}`))
+
