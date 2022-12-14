@@ -8,7 +8,7 @@
 const bodyParser = require('body-parser')
 const express = require('express')
 const admin = require('firebase-admin')
-// const functions = require('firebase-functions')
+const functions = require('firebase-functions')
 const ServiceAccount = require('./ServiceAccount.json')
 
 // expressのappを作成する。
@@ -21,7 +21,7 @@ const db = admin.firestore()
 
 // dbの参照取得
 // const docref = db.collection('users').doc('aturing')
-const docref = db.collection('users')
+const docref = db.collection('userpost')
 // helloを返すだけ
 app.get('/hello', (request, response) => {
   response.send('Hello')
@@ -44,14 +44,14 @@ app.get('/messages', async (request, response) => {
   response.send(messages)
 })
 
-app.post('/messages', async (request, response) => {
-  console.log('test')
+app.post('/userpost', async (request, response) => {
   const message = {
-    text: request.body.text,
+    // text: request.body.text,
+    text: 'he',
     timestamp: admin.firestore.FieldValue.serverTimestamp()
   }
   await docref.add(message)
-  response.send(message)
+  response.redirect('/')
 })
 
 // setするデータ
@@ -80,7 +80,6 @@ app.post('/messages', async (request, response) => {
 
 // https関数の作成
 // これらの関数にリクエストが来るたびに処理を返す
-// exports.app = functions.https.onRequest(app)
-const port = '8080'
-app.listen(port, () => console.log(`app start listening on port ${port}`))
-
+exports.app = functions.https.onRequest(app)
+// const port = '5000'
+// app.listen(port, () => console.log(`app start listening on port ${port}`))
