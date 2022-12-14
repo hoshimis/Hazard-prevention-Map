@@ -19,12 +19,6 @@ var initMap = () => {
   }
   map = new google.maps.Map(document.getElementById('map'), options)
 
-  // const circle = new google.maps.Circle({
-  //   map: map,
-  //   center: latLng,
-  //   radius: 90
-  // })
-
   const marker = new google.maps.Marker({
     map: map,
     position: latLng,
@@ -40,6 +34,7 @@ var initMap = () => {
   const origin = params.get('origin')
   const destination = params.get('destination')
 
+  // 現在地と宛先のパラメタがあったならば
   if (origin !== null && destination !== null) {
     directionMap(origin, destination)
   }
@@ -108,32 +103,20 @@ const getJSON = () => {
         const lat = data.marker[i].lat //緯度
         const lng = data.marker[i].lng //経度
         const name = data.marker[i].name //タイトル
-        const flg = data.marker[i].flg //flg
 
-        // flgがAの値のみを表示する
-        if (flg === 'A') {
-          //マーカーとタイトルを表示する
-          const marker = new google.maps.Marker({
-            map: map, //表示している地図を指定する
-            position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
-            title: name, //タイトルに値を設定する
-            icon: 'http://mt.google.com/vt/icon?psize=16&font=fonts/Roboto-Regular.ttf&color=ff330000&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=3&text=A'
-          })
-        } else if (flg === 'B') {
-          const marker = new google.maps.Marker({
-            map: map, //表示している地図を指定する
-            position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
-            title: name, //タイトルに値を設定する
-            icon: 'http://mt.google.com/vt/icon?psize=16&font=fonts/Roboto-Regular.ttf&color=ff330000&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=3&text=B'
-          })
-        } else if (flg === 'C') {
-          const marker = new google.maps.Marker({
-            map: map, //表示している地図を指定する
-            position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
-            title: name, //タイトルに値を設定する
-            icon: 'http://mt.google.com/vt/icon?psize=16&font=fonts/Roboto-Regular.ttf&color=f3331111&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=3&text=C'
-          })
-        }
+        // マーカーの表示
+        const marker = new google.maps.Marker({
+          map: map, //表示している地図を指定する
+          position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
+          title: name, //タイトルに値を設定する
+          icon: 'http://mt.google.com/vt/icon?psize=16&font=fonts/Roboto-Regular.ttf&color=ff330000&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=3&text=A'
+        })
+
+        // const circle = new google.maps.Circle({
+        //   map: map,
+        //   center: latLng,
+        //   radius: 90
+        // })
       }
     }
   }
