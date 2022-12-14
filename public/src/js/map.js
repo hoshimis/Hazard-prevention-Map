@@ -21,10 +21,9 @@ var initMap = () => {
 
   const marker = new google.maps.Marker({
     map: map,
-    position: latLng,
+    position: currentlatlng,
 
-    title: '名古屋駅！！',
-    class: 'fff/'
+    title: '名古屋駅！！'
   })
 
   // クリックイベントを追加
@@ -35,16 +34,59 @@ var initMap = () => {
     var lat = document.getElementById('lat')
     var lng = document.getElementById('lng')
 
-    lat.value = e.latLng.lat();
-    lng.value = e.latLng.lng();
+    lat.value = e.latLng.lat()
+    lng.value = e.latLng.lng()
   })
+
+  // URLを取得
+  let url = new URL(window.location.href)
+  // URLSearchParamsオブジェクトを取得
+  let params = url.searchParams
+
+  // getメソッド
+  const origin = params.get('origin')
+  const destination = params.get('destination')
+
+  if (origin !== null && destination !== null) {
+    directionMap(origin, destination)
+  }
+}
+
+/**
+ * @author 小池将弘
+ * @function directionMap 現在位置から指定位置までの道順を表示する。
+ */
+
+// directionApi
+const directionMap = (origin, destination) => {
+  //https://softauthor.com/google-maps-directions-service/
+  const directionsService = new google.maps.DirectionsService()
+  const directionsRenderer = new google.maps.DirectionsRenderer()
+
+  //directionsRenderer と地図を紐付け
+  directionsRenderer.setMap(map)
+
+  directionsService.route(
+    {
+      origin: origin,
+      destination: destination,
+      travelMode: 'WALKING' // 固定
+    },
+    (response, status) => {
+      console.log(response) //JSONの中身はここを見てね。
+      console.log(status)
+      if (status === 'OK') {
+        directionsRenderer.setDirections(response) //取得したルート（結果：result）をセット
+      }
+    }
+  )
 }
 
 function getAddress(latlng) {
   // ジオコーダのコンストラクタ
   var geocoder = new google.maps.Geocoder()
   let address
-  
+
   // geocodeリクエストを実行。
   // 第１引数はGeocoderRequest。緯度経度⇒住所の変換時はlatLngプロパティを入れればOK。
   // 第２引数はコールバック関数。
@@ -64,7 +106,6 @@ function getAddress(latlng) {
       }
     }
   )
-
 }
 
 /**
