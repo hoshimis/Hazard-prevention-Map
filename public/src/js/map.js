@@ -1,5 +1,4 @@
 /**
- * @author 小池将弘
  * @function initMap mapの初期化処理
  * @param latLng 地図の中心位置を指定
  * @param options 地図の表示設定
@@ -11,6 +10,7 @@
 let map
 
 var initMap = () => {
+  // 現在地の取得
   const currentlatlng = new google.maps.LatLng(35.170778, 136.882494)
   console.log('init map')
   const options = {
@@ -22,7 +22,6 @@ var initMap = () => {
   const marker = new google.maps.Marker({
     map: map,
     position: currentlatlng,
-
     title: '名古屋駅！！'
   })
 
@@ -31,17 +30,17 @@ var initMap = () => {
     console.log(e.latLng.lat())
     console.log(e.latLng.lng())
     getAddress(e.latLng)
-    var lat = document.getElementById('lat')
-    var lng = document.getElementById('lng')
+    const lat = document.getElementById('lat')
+    const lng = document.getElementById('lng')
 
     lat.value = e.latLng.lat()
     lng.value = e.latLng.lng()
   })
 
   // URLを取得
-  let url = new URL(window.location.href)
+  const url = new URL(window.location.href)
   // URLSearchParamsオブジェクトを取得
-  let params = url.searchParams
+  const params = url.searchParams
 
   // getメソッド
   const origin = params.get('origin')
@@ -53,13 +52,11 @@ var initMap = () => {
 }
 
 /**
- * @author 小池将弘
  * @function directionMap 現在位置から指定位置までの道順を表示する。
+ * @see https://softauthor.com/google-maps-directions-service/
  */
 
-// directionApi
 const directionMap = (origin, destination) => {
-  //https://softauthor.com/google-maps-directions-service/
   const directionsService = new google.maps.DirectionsService()
   const directionsRenderer = new google.maps.DirectionsRenderer()
 
@@ -73,21 +70,22 @@ const directionMap = (origin, destination) => {
       travelMode: 'WALKING' // 固定
     },
     (response, status) => {
-      console.log(response) //JSONの中身はここを見てね。
+      console.log(response)
       console.log(status)
       if (status === 'OK') {
-        directionsRenderer.setDirections(response) //取得したルート（結果：result）をセット
+        directionsRenderer.setDirections(response)
       }
     }
   )
 }
 
-function getAddress(latlng) {
-  // ジオコーダのコンストラクタ
-  var geocoder = new google.maps.Geocoder()
+/**
+ * @function getAddress タップした個所の緯度経度から住所に変換する
+ */
+const getAddress = (latlng) => {
+  const geocoder = new google.maps.Geocoder()
   let address
 
-  // geocodeリクエストを実行。
   // 第１引数はGeocoderRequest。緯度経度⇒住所の変換時はlatLngプロパティを入れればOK。
   // 第２引数はコールバック関数。
   geocoder.geocode(
@@ -98,8 +96,8 @@ function getAddress(latlng) {
       if (status == google.maps.GeocoderStatus.OK) {
         // results.length > 1 で返ってくる場合もありますが・・・。
         if (results[0].geometry) {
-          // 住所を取得(日本の場合だけ「日本, 」を削除)
-          address = results[0].formatted_address.replace(/^日本, /, '')
+          // 住所を取得(日本の場合だけ「日本、」を削除)
+          address = results[0].formatted_address.replace(/^日本、/, '')
           const place = document.getElementById('place')
           place.value = address
         }
@@ -109,7 +107,6 @@ function getAddress(latlng) {
 }
 
 /**
- * @author 小池将弘
  * @function getJSON JSONとのやりとり
  * @param req XMLHttpRequest オブジェクト
  * @function onreadystatechange XMLHttpRequest オブジェクトの状態が変化した際に呼び出されるイベントハンドラ

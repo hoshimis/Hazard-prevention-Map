@@ -1,5 +1,4 @@
 /**
- * @author 小池将弘
  * @see https://qiita.com/ozaki25/items/565c889a9941a5bbdd76
  * @see https://tech.chakapoko.com/nodejs/express/params.html
  */
@@ -26,16 +25,16 @@ const db = admin.firestore()
 // dbの参照取得
 const docref = db.collection('userpost')
 
-// app.get('/aa', (request, response) => {
-//   response.set('Cache-Control', 'public, max-age=300, s-maxage=600')
-//   response.render('index', { "test" })
-// })
-
 // ユーザ投稿をするAPI
 app.post('/userpost', async (request, response) => {
   const message = {
     // text: request.body.text,
-    text: 'たいようくん、エラーばっかり！！',
+    subject: request.body.subject,
+    date: request.body.date,
+    place: request.body.place,
+    lat: request.body.lat,
+    lng: request.body.lng,
+    remarks: request.body.remarks,
     timestamp: admin.firestore.FieldValue.serverTimestamp()
   }
   await docref.add(message)
@@ -43,7 +42,7 @@ app.post('/userpost', async (request, response) => {
 })
 
 // ユーザ投稿を取得するAPI
-app.get('/', async (request, response) => {
+app.get('/getuserpost', async (request, response) => {
   docref
     .get()
     .then((snapshot) => {
@@ -54,7 +53,6 @@ app.get('/', async (request, response) => {
     .catch((err) => {
       console.log('Error getting documents', err)
     })
-  response.redirect('/')
 })
 
 exports.app = functions.https.onRequest(app)

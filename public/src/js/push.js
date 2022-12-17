@@ -1,13 +1,17 @@
 const sendPushNotification = () => {
-  console.log('notification')
-  Push.create('sample', {
-    body: 'sample.message',
+  Push.create('危険予防マップ', {
+    body: '危険な区域に近づきました。周りに注意してください。',
     icon: '../images/sample.png',
     timeout: 5000,
-    onClick: function () {
+    onClick: () => {
       this.close()
       location.href = '/'
     }
   })
-  console.log('notification')
 }
+
+const testBtn = document.querySelector('.test-notification-button')
+testBtn.addEventListener('click', () => {
+  sendPushNotification()
+  console.log('test')
+})

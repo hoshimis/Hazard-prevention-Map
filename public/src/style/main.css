@@ -1,4 +1,7 @@
 html {
+  height: 100%;
+  margin: 0;
+  padding: 0;
   /*IE(Internet Explorer)・Microsoft Edgeへの対応*/
   -ms-overflow-style: none;
   /*Firefoxへの対応*/
@@ -10,5 +13,37 @@ html::-webkit-scrollbar {
 }
 
 body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
   background: rgb(216, 216, 216);
+}
+
+.section-map {
+  height: 100%;
+  width: 100%;
+}
+
+#map {
+  height: 100%;
+  width: 100%;
+  border-radius: 20px;
+}
+
+.section-serchMap {
+  margin-top: 20px;
+}
+
+.section-routeMap {
+  height: 55%;
+  width: 80%;
+}
+
+.section-userpostMap {
+  height: 80%;
+}
+
+/* setings */
+.test-notification-button {
+  margin-left: 100px;
 }
