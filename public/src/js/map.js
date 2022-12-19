@@ -29,6 +29,8 @@ var initMap = () => {
     position: latLng,
     title: "名古屋駅！！",
   });
+
+  getJSON()
 };
 
 /**
@@ -69,6 +71,7 @@ const getJSON = () => {
         const lng = data.marker[i].lng; //経度
         const name = data.marker[i].name; //タイトル
         const flg = data.marker[i].flg; //flg
+        
 
         // flgがAの値のみを表示する
         if (flg === "A") {
@@ -97,6 +100,6 @@ const getJSON = () => {
       }
     }
   };
-  req.open("GET", "./data.json", true);
+  req.open("GET", "./2018.json", true);
   req.send();
 };
