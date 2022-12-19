@@ -1,17 +1,11 @@
 /**
- * @author 小池将弘 [https://github.com/hoshimis]
  * @brief add serviceworkerの全体説明
  * @desc スコープはサービスワーカーが存在する階層が勝手に指定される
  * @see https://32877.info/view/how-to-PWA-with-Push-Notification-01
  * @see https://qiita.com/y_fujieda/items/f9e765ac9d89ba241154
  * @see https://developers.google.com/web/fundamentals/codelabs/your-first-pwapp/?hl=ja
  *  */
-
-// import env from 'dotenv'
-// env.config()
-
 /**
- * @author 小池将弘  [https://github.com/hoshimis]
  * @desc install時の挙動
  * @see https://qiita.com/y_fujieda/items/f9e765ac9d89ba241154
  *
@@ -47,7 +41,6 @@ self.addEventListener('install', (e) => {
 })
 
 /**
- * @author 小池将弘  [https://github.com/hoshimis]
  * @see https://qiita.com/y_fujieda/items/f9e765ac9d89ba241154
  * @desc
  * 新規のインストール時には何も処理されない。
@@ -78,7 +71,6 @@ self.addEventListener('activate', (e) => {
 })
 
 /**
- * @author 小池将弘  [https://github.com/hoshimis]
  * @see https://qiita.com/y_fujieda/items/f9e765ac9d89ba241154
  * @desc
  * serviceworkerがブラウザをコントロールしている時にリソースのリクエストが発生すると、fetchが発火する。
@@ -114,7 +106,6 @@ self.addEventListener('fetch', (e) => {
         caches.open(CACHE_NAME).then((cache) => {
           cache.put(e.request, responseToCache)
         })
-
         return response
       })
     })

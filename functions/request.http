@@ -9,10 +9,4 @@
 # https://github.com/Huachao/vscode-restclient
 
 ###
-GET http://localhost:8080/hello
-###
-GET http://localhost:8080/timestamp
-###
-GET http://localhost:8080/messages
-###
-POST http://localhost:8080/messages
+GET http://localhost:8080/getuserpost
