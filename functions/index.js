@@ -46,9 +46,21 @@ app.get('/getuserpost', async (request, response) => {
   docref
     .get()
     .then((snapshot) => {
+      let userPosts = []
+      let buff = { userPosts }
       snapshot.forEach((doc) => {
-        console.log(doc.id, '=>', doc.data())
+        let data = doc.data()
+        userPosts.push({
+          id: doc.id,
+          subject: data.subject,
+          date: data.date,
+          place: data.place,
+          lat: data.lat,
+          lng: data.lng,
+          remarks: data.remarks
+        })
       })
+      response.json(buff)
     })
     .catch((err) => {
       console.log('Error getting documents', err)

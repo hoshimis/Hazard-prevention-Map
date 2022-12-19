@@ -6,6 +6,10 @@ section {
   margin-bottom: 50px;
 }
 
+.btn {
+  margin-right: 50px;
+}
+
 .form-check-input {
   padding: 15px 30px;
 }
@@ -15,6 +19,19 @@ section {
   font-size: 22px;
 }
 
+.test-notification-button {
+  margin-left: 100px;
+}
+
 .form-control-color {
-  width: 8rem;
+  width: 6rem !important;
+}
+
+.input-data {
+  display: flex;
+  justify-content: space-between;
+}
+
+.set-color-button {
+  margin-right: 40px;
 }

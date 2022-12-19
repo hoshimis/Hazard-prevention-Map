@@ -53,7 +53,7 @@
         </p>
       </div>
 
-      <form action="../../index.html" method="post">
+      <form action="../../index.html" method="get">
         <div class="content-input">
           <!-- 現在地 -->
           <div id="currentAddressHelp" class="form-text">現在地は自動で入力されます。</div>
@@ -97,9 +97,9 @@
     crossorigin="anonymous"></script>
 
   <!-- map -->
-  <script async defer
+  <script defer src="../js/route.js"></script>
+  <script defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0mNC8boGeHcP2uxLz8c46i5DSe7TC99I&language=ja&callback=initMap"></script>
-  <script src="../js/map.js"></script>
 </body>
 
 </html>

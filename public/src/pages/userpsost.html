@@ -88,7 +88,7 @@
               <!-- 日時 -->
               <div class="input-group input-group mb-3">
                 <span class="input-group-text" id="inputGroup-sizing-default">日時</span>
-                <input type="datetime-local" id="datetime" class="form-control" aria-label="Sizing example input"
+                <input type="datetime" id="date" class="form-control" aria-label="Sizing example input"
                   aria-describedby="inputGroup-sizing-default" name="date">
               </div>
               <!-- 場所 -->
@@ -109,7 +109,7 @@
         </div>
         <div class="modal-footer">
           <div class="btn-group">
-            <button class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">閉じる</button>
             <button type="submit" class="btn btn-primary">投稿する</button>
           </div>
         </div>
@@ -130,9 +130,9 @@
     crossorigin="anonymous"></script>
 
   <!-- map -->
-  <script async defer
+  <script defer src="../js/userPost.js"></script>
+  <script defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0mNC8boGeHcP2uxLz8c46i5DSe7TC99I&language=ja&callback=initMap"></script>
-  <script src="../js/map.js"></script>
 </body>
 
 </html>
