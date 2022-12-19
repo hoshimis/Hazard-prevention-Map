@@ -79,8 +79,8 @@
               <!-- ドロップダウンメニュー -->
               <div class="input-group mb-3">
                 <label class="input-group-text" for="inputGroupSelect01">件名</label>
-                <select class="form-select" id="subject" name="subject">
-                  <option selected>選択</option>
+                <select class="form-select" id="subject" name="subject" required>
+                  <option selected disabled value="">選択</option>
                   <option value="ひったくり">ひったくり</option>
                   <option value="ストーカー">ストーカー</option>
                 </select>
@@ -88,22 +88,22 @@
               <!-- 日時 -->
               <div class="input-group input-group mb-3">
                 <span class="input-group-text" id="inputGroup-sizing-default">日時</span>
-                <input type="datetime" id="date" class="form-control" aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-default" name="date">
+                <input type="datetime-local" id="date" class="form-control" aria-label="Sizing example input"
+                  aria-describedby="inputGroup-sizing-default" name="date" required>
               </div>
               <!-- 場所 -->
               <div class="input-group input-group mb-3">
                 <span class="input-group-text" id="inputGroup-sizing-default">場所</span>
                 <input type="text" id="place" class="form-control" aria-label="Sizing example input"
-                  aria-describedby="inputGroup-sizing-default" name="place">
+                  aria-describedby="inputGroup-sizing-default" name="place" required>
               </div>
               <!-- トークン -->
-              <p><input id="lat" type="hidden" name="lat"></p>
-              <p><input id="lng" type="hidden" name="lng"></p>
+              <p><input id="lat" type="hidden" name="lat" required></p>
+              <p><input id="lng" type="hidden" name="lng" required></p>
               <!-- 備考 -->
               <div class="input-group">
                 <span class="input-group-text">備考</span>
-                <textarea class="form-control" aria-label="With textarea" name="remarks"></textarea>
+                <textarea class="form-control" aria-label="With textarea" name="remarks" required></textarea>
               </div>
             </div>
         </div>
