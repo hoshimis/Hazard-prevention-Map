@@ -1,85 +1,70 @@
 /**
- * @author 小池将弘
  * @see https://qiita.com/ozaki25/items/565c889a9941a5bbdd76
  * @see https://tech.chakapoko.com/nodejs/express/params.html
  */
 
 // expressのimport
-const bodyParser = require('body-parser')
 const express = require('express')
+const bodyParser = require('body-parser')
 const admin = require('firebase-admin')
-// const functions = require('firebase-functions')
+const functions = require('firebase-functions')
 const ServiceAccount = require('./ServiceAccount.json')
+const engines = require('consolidate')
 
-// expressのappを作成する。
+// expressのappを作成
 const app = express()
+app.engine('hbs', engines.handlebars)
+app.set('views', './views')
+app.set('view engine', 'hbs')
 app.use(bodyParser.json())
 
-// firestore firebase initialize
+// firebase firestore の初期化
 admin.initializeApp({ credential: admin.credential.cert(ServiceAccount) })
 const db = admin.firestore()
 
 // dbの参照取得
-// const docref = db.collection('users').doc('aturing')
-const docref = db.collection('users')
-// helloを返すだけ
-app.get('/hello', (request, response) => {
-  response.send('Hello')
-})
+const docref = db.collection('userpost')
 
-// timestampのパスにgetでアクセスしたら以下を実行
-// コンテンツキャッシュの作成
-app.get('/timestamp', (request, response) => {
-  response.set('Cache-Control', 'public', 'max-age=300', 'smax-age=600')
-  response.send(`${Date.now()}`)
-})
-
-app.get('/messages', async (request, response) => {
-  // messageコレクションのデータを全量取得
-  const snapshots = await docref.get()
-  // レスポンスからデータ部分のみ取り出す
-  const messages = snapshots.docs.map((doc) => {
-    doc.data()
-  })
-  response.send(messages)
-})
-
-app.post('/messages', async (request, response) => {
-  console.log('test')
+// ユーザ投稿をするAPI
+app.post('/userpost', async (request, response) => {
   const message = {
-    text: request.body.text,
+    // text: request.body.text,
+    subject: request.body.subject,
+    date: request.body.date,
+    place: request.body.place,
+    lat: request.body.lat,
+    lng: request.body.lng,
+    remarks: request.body.remarks,
     timestamp: admin.firestore.FieldValue.serverTimestamp()
   }
   await docref.add(message)
-  response.send(message)
+  response.redirect('/')
 })
 
-// setするデータ
-// const setAda = docref.set({
-//   first: 'Ada',
-//   last: 'Lovelace',
-//   born: '1815'
-// })
-// const setAda = docref.set({
-//   first: 'Alan',
-//   Middle: 'Mathison',
-//   last: 'Turing',
-//   born: '1815'
-// })
-// データの取得
-// db.collection('users')
-//   .get()
-//   .then((snapshot) => {
-//     snapshot.forEach((doc) => {
-//       console.log(`${doc.id} => ${doc.data()}`)
-//     })
-//   })
-//   .catch((err) => {
-//     console.log(`Error getting docments ${err}`)
-//   })
+// ユーザ投稿を取得するAPI
+app.get('/getuserpost', async (request, response) => {
+  docref
+    .get()
+    .then((snapshot) => {
+      let userPosts = []
+      let buff = { userPosts }
+      snapshot.forEach((doc) => {
+        let data = doc.data()
+        userPosts.push({
+          id: doc.id,
+          subject: data.subject,
+          date: data.date,
+          place: data.place,
+          lat: data.lat,
+          lng: data.lng,
+          remarks: data.remarks
+        })
+      })
+      response.json(buff)
+    })
+    .catch((err) => {
+      console.log('Error getting documents', err)
+    })
+})
 
-// https関数の作成
-// これらの関数にリクエストが来るたびに処理を返す
-// exports.app = functions.https.onRequest(app)
-const port = '8080'
-app.listen(port, () => console.log(`app start listening on port ${port}`))
+exports.app = functions.https.onRequest(app)
