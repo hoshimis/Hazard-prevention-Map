@@ -13,7 +13,7 @@
 </head>
 
 <body>
-  <header class="navbar navbar-expand-md navbar-light bg-light">
+  <header class="navbar navbar-expand-md navbar-light bg-light fixed-top">
     <div class="container">
       <a class="navbar-brand me-auto" href="/">app title</a>
 
@@ -21,13 +21,13 @@
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <a class="nav-link" href="./src/pages/routes.html">
-              <i class="fa-solid fa-gear fa-lg fa-fw"></i>
+              <i class="fa-solid fa-magnifying-glass"></i>
               search route
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="./src/pages/userpsost.html">
-              <i class="fa-solid fa-gear fa-lg fa-fw"></i>
+              <i class="fa-solid fa-location-dot"></i>
               userpost
             </a>
           </li>
@@ -46,6 +46,43 @@
     <div id="map">
     </div>
   </section>
+
+  <!-- footer -->
+  <footer class="d-block d-sm-none fixed-bottom">
+    <nav class="navigation">
+      <ul>
+        <li class="list active">
+          <a href="/">
+            <spn class="icon">
+              <i class="fa-solid fa-house"></i>
+            </spn>
+            <spn class="text">Home</spn>
+          </a>
+        </li>
+        <li class="list">
+          <a href="./src/pages/routes.html">
+            <spn class="icon">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </spn>
+            <spn class="text">Search</spn>
+          </a>
+        </li>
+        <li class="list">
+          <a href="./src/pages/userpsost.html">
+            <spn class="icon"><i class="fa-solid fa-location-dot"></i></spn>
+            <spn class="text">Post</spn>
+          </a>
+        </li>
+        <li class="list">
+          <a href="./src/pages/settings.html">
+            <spn class="icon"><i class="fa-solid fa-gear fa-lg fa-fw"></i></spn>
+            <spn class="text">Settings</spn>
+          </a>
+        </li>
+        <div class="indicator"></div>
+      </ul>
+    </nav>
+  </footer>
 
   <!-- bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
