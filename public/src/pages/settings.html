@@ -15,7 +15,7 @@
 
 <body>
   <!-- ヘッダー -->
-  <header class="navbar navbar-expand-md navbar-light bg-light">
+  <header class="navbar navbar-expand-md navbar-light bg-light fixed-top">
     <div class="container">
       <a class="navbar-brand me-auto" href="/">app title</a>
 
@@ -23,13 +23,13 @@
         <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
           <li class="nav-item">
             <a class="nav-link" href="./routes.html">
-              <i class="fa-solid fa-gear fa-lg fa-fw"></i>
+              <i class="fa-solid fa-magnifying-glass"></i>
               search route
             </a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="./userpsost.html">
-              <i class="fa-solid fa-gear fa-lg fa-fw"></i>
+              <i class="fa-solid fa-location-dot"></i>
               userpost
             </a>
           </li>
@@ -105,6 +105,45 @@
       </div>
     </section>
   </main>
+
+
+  <!-- footer -->
+  <footer class="d-block d-sm-none fixed-bottom">
+    <nav class="navigation">
+      <ul>
+        <li class="list">
+          <a href="/">
+            <spn class="icon">
+              <i class="fa-solid fa-house"></i>
+            </spn>
+            <spn class="text">Home</spn>
+          </a>
+        </li>
+        <li class="list">
+          <a href="./routes.html">
+            <spn class="icon">
+              <i class="fa-solid fa-magnifying-glass"></i>
+            </spn>
+            <spn class="text">Search</spn>
+          </a>
+        </li>
+        <li class="list">
+          <a href="./userpsost.html">
+            <spn class="icon"><i class="fa-solid fa-location-dot"></i></spn>
+            <spn class="text">Post</spn>
+          </a>
+        </li>
+        <li class="list active">
+          <a href="./settings.html">
+            <spn class="icon" style="margin-right: 10px;"><i class="fa-solid fa-gear fa-lg fa-fw"></i></spn>
+            <spn class="text">Settings</spn>
+          </a>
+        </li>
+        <div class="indicator"></div>
+      </ul>
+    </nav>
+  </footer>
+
 
   <!-- push -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/0.0.11/push.min.js"></script>
