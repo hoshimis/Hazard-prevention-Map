@@ -1,5 +1,5 @@
 html {
-  height: 95%;
+  height: 100%;
   margin: 0;
   padding: 0;
   /*IE(Internet Explorer)・Microsoft Edgeへの対応*/
@@ -8,7 +8,7 @@ html {
   scrollbar-width: none;
   font-family: 'Poppins', sans-serif;
   box-sizing: border-box;
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 html::-webkit-scrollbar {
@@ -17,9 +17,16 @@ html::-webkit-scrollbar {
 
 body {
   height: 100%;
-  margin: 0;
   padding: 0;
   background: rgb(216, 216, 216);
+}
+
+/* index.html */
+.indexMain {
+  height: 100%;
+  width: 100%;
+  margin-top: 80px;
+  margin-bottom: 80px;
 }
 
 .section-map {
@@ -32,21 +39,9 @@ body {
   width: 100%;
   border-radius: 20px;
 }
-
-.section-routeMap {
-  height: 50%;
-  width: 80%;
-}
 /* ↓userpost.html */
-.section-serchMap {
-  margin-top: 75px;
-}
 .section-userpostMap {
-  height: 70%;
-}
-
-.modal {
-  overflow: hidden;
+  height: 100%;
 }
 
 /* ↓footer */
