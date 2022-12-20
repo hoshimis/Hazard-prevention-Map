@@ -64,7 +64,7 @@ const successGetCurrentPosition = (position) => {
     })
   } else {
     // 地図の中心を変更
-    syncerWatchPosition.setCenter(currentLatlng)
+    syncerWatchPosition.map.setCenter(currentLatlng)
 
     // マーカーの場所を変更
     syncerWatchPosition.marker.setPosition(currentLatlng)
@@ -207,6 +207,7 @@ const checkDirectionParam = (map) => {
 const directionMap = (origin, destination, map) => {
   const directionsService = new google.maps.DirectionsService()
   const directionsRenderer = new google.maps.DirectionsRenderer()
+  directionsRenderer.setMap(map)
   directionsService.route(
     {
       origin: origin,
@@ -216,7 +217,6 @@ const directionMap = (origin, destination, map) => {
     (response, status) => {
       if (status === 'OK') {
         //directionsRenderer と地図を紐付け
-        directionsRenderer.setMap(map)
         directionsRenderer.setDirections(response)
       }
     }
