@@ -111,8 +111,22 @@ const getUserPost = (url, map) => {
           map: map, //表示している地図を指定する
           position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
           title: name //タイトルに値を設定する
+
           // icon: 'http://mt.google.com/vt/icon?psize=16&font=fonts/Roboto-Regular.ttf&color=ff330000&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=3&text=A'
         })
+        
+        
+        google.maps.event.addListener(marker, 'click', (function(marker) {
+          return function() {
+          /*Bootstrap Modal Pop Up Open Code*/
+          console.log("a")
+          $(".modal-title").text("This is google map..");
+          $(".modal-body").text("Modal Body");
+          $("#staticBackdrop").modal('show');
+          }
+          })(marker));
+         
+
         const circle = new google.maps.Circle({
           map: map,
           center: new google.maps.LatLng(lat, lng),
