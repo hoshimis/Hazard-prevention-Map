@@ -9,38 +9,27 @@ const getUserPostUrl = 'http://localhost:5000/getuserpost'
  * @param marker マーカーとタイトルの表示
  */
 
-var initMap = () => {
-  console.log('init map')
-  navigator.geolocation.getCurrentPosition((currentPoition) => {
-    const currentlatlng = new google.maps.LatLng(
-      currentPoition.coords.latitude,
-      currentPoition.coords.longitude
-    )
-    const options = {
-      zoom: 15, //地図の縮尺値を設定する
-      center: currentlatlng //地図の中心座標を設定する
-    }
-    const mapConf = new google.maps.Map(document.getElementById('map'), options)
-    const marker = new google.maps.Marker({
-      map: mapConf,
-      position: currentlatlng,
-      title: 'ここが現在地です。'
-    })
-
-    // // 現在位置を追跡する。
-    // navigator.geolocation.watchPosition(
-    //   successGetCurrentPosition(mapConf, currentlatlng),
-    //   errGetCurrentPosition,
-    //   optionObj
-    // )
-    init(mapConf)
-  })
+// グローバル変数
+var syncerWatchPosition = {
+  count: 0,
+  lastTime: 0,
+  map: null,
+  marker: null
 }
 
-let syncerWatchPosition = { lastTime: 0 }
+var initMap = () => {
+  console.log('init map')
+  let watchId = navigator.geolocation.watchPosition(
+    successGetCurrentPosition,
+    errGetCurrentPosition,
+    syncerWatchPosition
+  )
+}
 
 // 現在位置を取得するのに成功した場合に実行
-const successGetCurrentPosition = (mapConf, currentlatlng) => {
+const successGetCurrentPosition = (position) => {
+  // データの更新
+  ++syncerWatchPosition.count // 処理回数
   let nowTime = ~~(new Date() / 1000) // UNIX Timestamp
 
   // 前回の書き出しから3秒以上経過していたら描写
@@ -50,18 +39,44 @@ const successGetCurrentPosition = (mapConf, currentlatlng) => {
   }
   // 前回の時間を更新
   syncerWatchPosition.lastTime = nowTime
-  console.log(mapConf)
-  // 地図の中心を変更
-  mapConf.setCenter(currentlatlng)
 
-  // // マーカーの場所を変更
-  // mapConf.setPosition(currentlatlng)
+  // 位置情報
+  const currentLatlng = new google.maps.LatLng(
+    position.coords.latitude,
+    position.coords.longitude
+  )
+
+  // Google Mapsに書き出し
+  if (syncerWatchPosition.map == null) {
+    // 地図の新規出力
+    syncerWatchPosition.map = new google.maps.Map(
+      document.getElementById('map'),
+      {
+        zoom: 15, // ズーム値
+        center: currentLatlng // 中心座標 [latlng]
+      }
+    )
+
+    // マーカーの新規出力
+    syncerWatchPosition.marker = new google.maps.Marker({
+      map: syncerWatchPosition.map,
+      position: currentLatlng
+    })
+  } else {
+    // 地図の中心を変更
+    syncerWatchPosition.map.setCenter(currentLatlng)
+
+    // マーカーの場所を変更
+    syncerWatchPosition.marker.setPosition(currentLatlng)
+  }
+
+  init(syncerWatchPosition.map)
 }
 
 // 現在地取得に失敗したときに実行される関数
 const errGetCurrentPosition = (error) => {
   // エラーコードのメッセージを定義
-  var errorMessage = {
+  const errorMessage = {
     0: '原因不明のエラーが発生しました…。',
     1: '位置情報の取得が許可されませんでした…。',
     2: '電波状況などで位置情報が取得できませんでした…。',
@@ -70,13 +85,6 @@ const errGetCurrentPosition = (error) => {
 
   // エラーコードに合わせたエラー内容を表示
   alert(errorMessage[error.code])
-}
-
-// オプション・オブジェクト
-var optionObj = {
-  enableHighAccuracy: false,
-  timeout: 1000000,
-  maximumAge: 0
 }
 
 function init(mapConf) {
@@ -201,10 +209,7 @@ const checkDirectionParam = (map) => {
 const directionMap = (origin, destination, map) => {
   const directionsService = new google.maps.DirectionsService()
   const directionsRenderer = new google.maps.DirectionsRenderer()
-
-  //directionsRenderer と地図を紐付け
   directionsRenderer.setMap(map)
-
   directionsService.route(
     {
       origin: origin,
@@ -213,8 +218,10 @@ const directionMap = (origin, destination, map) => {
     },
     (response, status) => {
       if (status === 'OK') {
+        //directionsRenderer と地図を紐付け
         directionsRenderer.setDirections(response)
       }
     }
   )
+  map.setCenter(origin)
 }
