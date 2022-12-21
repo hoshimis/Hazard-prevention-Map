@@ -1,4 +1,4 @@
-const getUserPostUrl = 'http://localhost:5000/getuserpost'
+const getUserPostUrl = 'https://test-pwa-5ae30.web.app/getuserpost'
 
 /**
  * @function initMap mapの初期化処理
@@ -9,12 +9,19 @@ const getUserPostUrl = 'http://localhost:5000/getuserpost'
  * @param marker マーカーとタイトルの表示
  */
 
-// グローバル変数
-var syncerWatchPosition = {
+// 現在地点に関する変数
+let syncerWatchPosition = {
   count: 0,
   lastTime: 0,
   map: null,
   marker: null
+}
+
+// 危険地域と通知に関する変数
+let allSpot = {
+  openDangerousSpot: [],
+  userDangerousSpotOpen: [],
+  notoified: []
 }
 
 var initMap = () => {
@@ -68,9 +75,21 @@ const successGetCurrentPosition = (position) => {
 
     // マーカーの場所を変更
     syncerWatchPosition.marker.setPosition(currentLatlng)
+    console.log('makerが変更されるい！！')
+    calcDistance(currentLatlng)
   }
 
   init(syncerWatchPosition.map)
+}
+
+// 危険スポットの描画処理
+function init(mapConf) {
+  // ユーザ投稿情報の取得
+  getUserPost(getUserPostUrl, mapConf)
+  // オープンデータ情報の取得
+  getJSON(mapConf)
+  // ルート検索から遷移された場合
+  checkDirectionParam(mapConf)
 }
 
 // 現在地取得に失敗したときに実行される関数
@@ -87,15 +106,6 @@ const errGetCurrentPosition = (error) => {
   alert(errorMessage[error.code])
 }
 
-function init(mapConf) {
-  // ユーザ投稿情報の取得
-  getUserPost(getUserPostUrl, mapConf)
-  // オープンデータ情報の取得
-  getJSON(mapConf)
-  // ルート検索から遷移された場合
-  checkDirectionParam(mapConf)
-}
-
 // ユーザ投稿の取得
 const getUserPost = (url, map) => {
   let getColor = localStorage.getItem('userDataColor')
@@ -109,9 +119,10 @@ const getUserPost = (url, map) => {
     })
     .then((data) => {
       // JSON のデータ数分処理
+      allSpot.userDangerousSpotOpen = data //userデータを格納
       for (let i = 0; i < data.userPosts.length; i++) {
-        const lat = data.userPosts[i].lat //緯度
-        const lng = data.userPosts[i].lng //経度
+        const lat = data.userPosts[i].lat
+        const lng = data.userPosts[i].lng
         const name = data.userPosts[i].subject //タイトル
 
         // マーカーの表示
@@ -156,10 +167,10 @@ const getJSON = (map) => {
   req.onreadystatechange = () => {
     if (req.readyState == 4 && req.status == 200) {
       const data = JSON.parse(req.responseText)
-      console.log('kkkk');
+      console.log('kkkk')
       // JSON のデータ数分処理
       for (let i = 0; i < data.marker.length; i++) {
-        console.log('test');
+        console.log('test')
         const lat = data.marker[i].lat //緯度
         const lng = data.marker[i].lng //経度
         const name = data.marker[i].name //タイトル
@@ -182,8 +193,8 @@ const getJSON = (map) => {
       }
     }
   }
-  console.log('tttt');
-  req.open('GET', '../../2018.json', true)
+  req.open('GET', '../../openData.json', true)
+
   req.send()
 }
 
@@ -224,4 +235,42 @@ const directionMap = (origin, destination, map) => {
     }
   )
   map.setCenter(origin)
+}
+
+const calcDistance = (position) => {
+  console.log('距離を測るよ！')
+  let distance = []
+  const currentPosition = position
+  const spot = allSpot.userDangerousSpotOpen.userPosts
+  for (let i = 0; i < spot.length; i++) {
+    let position = new google.maps.LatLng(spot[i].lat, spot[i].lng)
+    distance[i] = google.maps.geometry.spherical.computeDistanceBetween(
+      currentPosition,
+      position
+    )
+    console.log(distance[i], distance[i] < 100)
+    if (distance[i] < 100) {
+      console.log('条件に当てはまったよ！！')
+      sendPushNotification()
+    }
+  }
+}
+
+/**
+ * push
+ * 危険範囲に入ったら発火
+ * push通知を送る
+ * @see
+ */
+const sendPushNotification = () => {
+  console.log('push通知が発火された！！')
+  Push.create('危険予防マップ', {
+    body: '危険な区域に近づきました。周りに注意してください。',
+    // icon: 'publicsrcimagessample.png',
+    timeout: 5000,
+    onClick: () => {
+      this.close()
+      location.href = '/'
+    }
+  })
 }
