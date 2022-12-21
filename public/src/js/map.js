@@ -34,7 +34,6 @@ var initMap = () => {
 };
 
 /**
- * @author 小池将弘
  * @function getJSON JSONとのやりとり
  * @param req XMLHttpRequest オブジェクト
  * @function onreadystatechange XMLHttpRequest オブジェクトの状態が変化した際に呼び出されるイベントハンドラ
