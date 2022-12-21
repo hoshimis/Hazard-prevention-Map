@@ -167,9 +167,10 @@ const getJSON = (map) => {
   req.onreadystatechange = () => {
     if (req.readyState == 4 && req.status == 200) {
       const data = JSON.parse(req.responseText)
-
+      console.log('kkkk')
       // JSON のデータ数分処理
       for (let i = 0; i < data.marker.length; i++) {
+        console.log('test')
         const lat = data.marker[i].lat //緯度
         const lng = data.marker[i].lng //経度
         const name = data.marker[i].name //タイトル
@@ -192,8 +193,8 @@ const getJSON = (map) => {
       }
     }
   }
-
   req.open('GET', '../../openData.json', true)
+
   req.send()
 }
 
