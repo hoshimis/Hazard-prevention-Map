@@ -1,5 +1,6 @@
 const getUserPostUrl = 'https://test-pwa-5ae30.web.app/getuserpost'
 
+
 /**
  * @function initMap mapの初期化処理
  * @param latLng 地図の中心位置を指定
@@ -124,14 +125,40 @@ const getUserPost = (url, map) => {
         const lat = data.userPosts[i].lat
         const lng = data.userPosts[i].lng
         const name = data.userPosts[i].subject //タイトル
+        const place = data.userPosts[i].place // 場所
+        const date = data.userPosts[i].date // 日付、日時
+        const remarks = data. userPosts[i].remarks //備考
+
+        
 
         // マーカーの表示
         const marker = new google.maps.Marker({
           map: map, //表示している地図を指定する
           position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
           title: name //タイトルに値を設定する
+
           // icon: 'http://mt.google.com/vt/icon?psize=16&font=fonts/Roboto-Regular.ttf&color=ff330000&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=3&text=A'
         })
+
+        
+        
+        const infoWindow = new google.maps.InfoWindow({
+          //map: map, //表示している地図を指定する
+          position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
+          content: `
+          <div>${name}</div>
+          <div>${place}</div>
+          <div>${date}</div>
+          <div>${remarks}</div>`,
+          pixelOffset: new google.maps.Size(0, -50)
+        })
+        
+          //マーカーをクリックしたら情報ウィンドウを開く
+          marker.addListener('click', () => {
+            infoWindow.open(map);
+          });
+         
+
         const circle = new google.maps.Circle({
           map: map,
           center: new google.maps.LatLng(lat, lng),
@@ -219,6 +246,7 @@ const checkDirectionParam = (map) => {
  */
 const directionMap = (origin, destination, map) => {
   const directionsService = new google.maps.DirectionsService()
+  directionsRenderer.setMap(map)
   const directionsRenderer = new google.maps.DirectionsRenderer()
   directionsRenderer.setMap(map)
   directionsService.route(
