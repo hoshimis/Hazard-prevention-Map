@@ -1,10 +1,6 @@
 hr {
   margin-top: 20px;
 }
-section {
-  margin-top: 20px;
-  margin-bottom: 50px;
-}
 
 .btn {
   margin-right: 50px;
@@ -19,10 +15,6 @@ section {
   font-size: 22px;
 }
 
-.test-notification-button {
-  margin-left: 100px;
-}
-
 .form-control-color {
   width: 6rem !important;
 }
@@ -34,4 +26,12 @@ section {
 
 .set-color-button {
   margin-right: 40px;
+}
+
+.settingsMain {
+  margin-top: 30px;
+}
+
+.push-box {
+  display: flex;
 }
