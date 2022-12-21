@@ -1,4 +1,4 @@
-const getUserPostUrl = 'http://localhost:5000/getuserpost'
+const getUserPostUrl = 'https://test-pwa-5ae30.web.app/getuserpost'
 
 /**
  * @function initMap mapの初期化処理
@@ -192,7 +192,8 @@ const getJSON = (map) => {
       }
     }
   }
-  req.open('GET', './data.json', true)
+
+  req.open('GET', '../../openData.json', true)
   req.send()
 }
 
