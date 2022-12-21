@@ -1,5 +1,6 @@
 const getUserPostUrl = 'http://localhost:5000/getuserpost'
 
+
 /**
  * @function initMap mapの初期化処理
  * @param latLng 地図の中心位置を指定
@@ -64,7 +65,7 @@ const successGetCurrentPosition = (position) => {
     })
   } else {
     // 地図の中心を変更
-    syncerWatchPosition.setCenter(currentLatlng)
+    syncerWatchPosition.map.setCenter(currentLatlng)
 
     // マーカーの場所を変更
     syncerWatchPosition.marker.setPosition(currentLatlng)
@@ -113,6 +114,11 @@ const getUserPost = (url, map) => {
         const lat = data.userPosts[i].lat //緯度
         const lng = data.userPosts[i].lng //経度
         const name = data.userPosts[i].subject //タイトル
+        const place = data.userPosts[i].place // 場所
+        const date = data.userPosts[i].date // 日付、日時
+        const remarks = data. userPosts[i].remarks //備考
+
+        
 
         // マーカーの表示
         const marker = new google.maps.Marker({
@@ -122,17 +128,24 @@ const getUserPost = (url, map) => {
 
           // icon: 'http://mt.google.com/vt/icon?psize=16&font=fonts/Roboto-Regular.ttf&color=ff330000&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=3&text=A'
         })
+
         
         
-        google.maps.event.addListener(marker, 'click', (function(marker) {
-          return function() {
-          /*Bootstrap Modal Pop Up Open Code*/
-          console.log("a")
-          $(".modal-title").text("This is google map..");
-          $(".modal-body").text("Modal Body");
-          $("#staticBackdrop").modal('show');
-          }
-          })(marker));
+        const infoWindow = new google.maps.InfoWindow({
+          //map: map, //表示している地図を指定する
+          position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
+          content: `
+          <div>${name}</div>
+          <div>${place}</div>
+          <div>${date}</div>
+          <div>${remarks}</div>`,
+          pixelOffset: new google.maps.Size(0, -50)
+        })
+        
+          //マーカーをクリックしたら情報ウィンドウを開く
+          marker.addListener('click', () => {
+            infoWindow.open(map);
+          });
          
 
         const circle = new google.maps.Circle({
@@ -220,6 +233,7 @@ const checkDirectionParam = (map) => {
  */
 const directionMap = (origin, destination, map) => {
   const directionsService = new google.maps.DirectionsService()
+  directionsRenderer.setMap(map)
   const directionsRenderer = new google.maps.DirectionsRenderer()
   directionsService.route(
     {
@@ -230,7 +244,6 @@ const directionMap = (origin, destination, map) => {
     (response, status) => {
       if (status === 'OK') {
         //directionsRenderer と地図を紐付け
-        directionsRenderer.setMap(map)
         directionsRenderer.setDirections(response)
       }
     }
