@@ -1,5 +1,4 @@
-const getUserPostUrl = 'https://test-pwa-5ae30.web.app/getuserpost'
-
+const getUserPostUrl = 'http://localhost:5000/getuserpost'
 
 /**
  * @function initMap mapの初期化処理
@@ -127,9 +126,7 @@ const getUserPost = (url, map) => {
         const name = data.userPosts[i].subject //タイトル
         const place = data.userPosts[i].place // 場所
         const date = data.userPosts[i].date // 日付、日時
-        const remarks = data. userPosts[i].remarks //備考
-
-        
+        const remarks = data.userPosts[i].remarks //備考
 
         // マーカーの表示
         const marker = new google.maps.Marker({
@@ -140,8 +137,6 @@ const getUserPost = (url, map) => {
           // icon: 'http://mt.google.com/vt/icon?psize=16&font=fonts/Roboto-Regular.ttf&color=ff330000&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=3&text=A'
         })
 
-        
-        
         const infoWindow = new google.maps.InfoWindow({
           //map: map, //表示している地図を指定する
           position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
@@ -152,12 +147,11 @@ const getUserPost = (url, map) => {
           <div>${remarks}</div>`,
           pixelOffset: new google.maps.Size(0, -50)
         })
-        
-          //マーカーをクリックしたら情報ウィンドウを開く
-          marker.addListener('click', () => {
-            infoWindow.open(map);
-          });
-         
+
+        //マーカーをクリックしたら情報ウィンドウを開く
+        marker.addListener('click', () => {
+          infoWindow.open(map)
+        })
 
         const circle = new google.maps.Circle({
           map: map,
@@ -201,6 +195,10 @@ const getJSON = (map) => {
         const lat = data.marker[i].lat //緯度
         const lng = data.marker[i].lng //経度
         const name = data.marker[i].name //タイトル
+        const place = data.marker[i].place // 場所
+        const date = data.marker[i].date // 日付、日時
+        const time = data.marker[i].time // 時間
+        const remarks = data.marker[i].remarks //備考
 
         const latlng = new google.maps.LatLng(lat, lng)
         // マーカーの表示
@@ -208,6 +206,23 @@ const getJSON = (map) => {
           map: map, //表示している地図を指定する
           position: latlng, //マーカーの表示位置を設定する
           title: name //タイトルに値を設定する
+        })
+
+        const infoWindow = new google.maps.InfoWindow({
+          //map: map, //表示している地図を指定する
+          position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
+          content: `
+          <div>${name}</div>
+          <div>${place}</div>
+          <div>${date}</div>
+          <div>${time}時台</div>
+          <div>${remarks}</div>`,
+          pixelOffset: new google.maps.Size(0, -50)
+        })
+
+        //マーカーをクリックしたら情報ウィンドウを開く
+        marker.addListener('click', () => {
+          infoWindow.open(map)
         })
 
         const circle = new google.maps.Circle({
