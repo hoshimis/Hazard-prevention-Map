@@ -67,7 +67,8 @@ const successGetCurrentPosition = (position) => {
     // マーカーの新規出力
     syncerWatchPosition.marker = new google.maps.Marker({
       map: syncerWatchPosition.map,
-      position: currentLatlng
+      position: currentLatlng,
+      icon: './src/images/icons8-google-maps-48.png'
     })
   } else {
     // 地図の中心を変更
