@@ -1,13 +1,5 @@
 const getUserPostUrl = 'http://localhost:5000/getuserpost'
-
-/**
- * @function initMap mapの初期化処理
- * @param latLng 地図の中心位置を指定
- * @param options 地図の表示設定
- * @param map mapクラスのインスタンス
- * @param circle 円の表示
- * @param marker マーカーとタイトルの表示
- */
+const getOpenDataUrl = 'http://localhost:5000/getopendata'
 
 // 現在地点に関する変数
 let syncerWatchPosition = {
@@ -23,6 +15,10 @@ let allSpot = {
   userDangerousSpotOpen: [],
   notoified: []
 }
+
+// 生成したmarker%circleを格納する配列
+let markers = []
+let circles = []
 
 var initMap = () => {
   console.log('init map')
@@ -76,7 +72,6 @@ const successGetCurrentPosition = (position) => {
 
     // マーカーの場所を変更
     syncerWatchPosition.marker.setPosition(currentLatlng)
-    console.log('makerが変更されるい！！')
     calcDistance(currentLatlng)
   }
 
@@ -84,11 +79,14 @@ const successGetCurrentPosition = (position) => {
 }
 
 // 危険スポットの描画処理
-function init(mapConf) {
+function init(mapConf = syncerWatchPosition.map) {
+  // すでにセットされているマーカをリセット
+  deleteMakers()
   // ユーザ投稿情報の取得
   getUserPost(getUserPostUrl, mapConf)
   // オープンデータ情報の取得
-  getJSON(mapConf)
+  getOpenData(getOpenDataUrl + '/' + 'All', mapConf)
+  console.log(mapConf)
   // ルート検索から遷移された場合
   checkDirectionParam(mapConf)
 }
@@ -109,136 +107,34 @@ const errGetCurrentPosition = (error) => {
 
 // ユーザ投稿の取得
 const getUserPost = (url, map) => {
-  let getColor = localStorage.getItem('userDataColor')
-  let color
-  getColor !== null ? (color = getColor) : (color = '#000')
-  console.log(color, getColor)
-
   fetch(url)
-    .then((response) => {
-      return response.json()
+    .then((res) => {
+      return res.json()
     })
     .then((data) => {
       // JSON のデータ数分処理
       allSpot.userDangerousSpotOpen = data //userデータを格納
-      for (let i = 0; i < data.userPosts.length; i++) {
-        const lat = data.userPosts[i].lat
-        const lng = data.userPosts[i].lng
-        const name = data.userPosts[i].subject //タイトル
-        const place = data.userPosts[i].place // 場所
-        const date = data.userPosts[i].date // 日付、日時
-        const remarks = data.userPosts[i].remarks //備考
-
-        // マーカーの表示
-        const marker = new google.maps.Marker({
-          map: map, //表示している地図を指定する
-          position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
-          title: name //タイトルに値を設定する
-
-          // icon: 'http://mt.google.com/vt/icon?psize=16&font=fonts/Roboto-Regular.ttf&color=ff330000&name=icons/spotlight/spotlight-waypoint-b.png&ax=44&ay=48&scale=3&text=A'
-        })
-
-        const infoWindow = new google.maps.InfoWindow({
-          //map: map, //表示している地図を指定する
-          position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
-          content: `
-          <div>${name}</div>
-          <div>${place}</div>
-          <div>${date}</div>
-          <div>${remarks}</div>`,
-          pixelOffset: new google.maps.Size(0, -50)
-        })
-
-        //マーカーをクリックしたら情報ウィンドウを開く
-        marker.addListener('click', () => {
-          infoWindow.open(map)
-        })
-
-        const circle = new google.maps.Circle({
-          map: map,
-          center: new google.maps.LatLng(lat, lng),
-          // 以下からオプション値
-          radius: 90,
-          fillColor: `${color}`,
-          strokeColor: `${color}`
-        })
-      }
+      setMarker(data.userPosts, map, 1)
     })
     .catch((err) => {
       console.log(err)
     })
 }
 
-/**
- * @function getJSON JSONとのやりとり
- * @param req XMLHttpRequest オブジェクト
- * @function onreadystatechange XMLHttpRequest オブジェクトの状態が変化した際に呼び出されるイベントハンドラ
- * @param data 取得したJsonファイルが格納される
- * @param latlng 地図の中心座標を指定
- * @param marker
- * @function open HTTPメソッドとアクセスするサーバーのURLを指定
- * @function send 実際にサーバーへリクエストを送信
- *
- * @see https://www.koreyome.com/web/json-data-get/
- */
-const getJSON = (map) => {
-  let getColor = localStorage.getItem('openDataColor')
-  let color
-  getColor !== undefined ? (color = getColor) : (color = '#000')
-  const req = new XMLHttpRequest()
-  req.onreadystatechange = () => {
-    if (req.readyState == 4 && req.status == 200) {
-      const data = JSON.parse(req.responseText)
-      console.log('kkkk')
+// オープンデータの取得
+const getOpenData = (url, map) => {
+  fetch(url)
+    .then((res) => {
+      return res.json()
+    })
+    .then((data) => {
       // JSON のデータ数分処理
-      for (let i = 0; i < data.marker.length; i++) {
-        console.log('test')
-        const lat = data.marker[i].lat //緯度
-        const lng = data.marker[i].lng //経度
-        const name = data.marker[i].name //タイトル
-        const place = data.marker[i].place // 場所
-        const date = data.marker[i].date // 日付、日時
-        const time = data.marker[i].time // 時間
-        const remarks = data.marker[i].remarks //備考
-
-        const latlng = new google.maps.LatLng(lat, lng)
-        // マーカーの表示
-        const marker = new google.maps.Marker({
-          map: map, //表示している地図を指定する
-          position: latlng, //マーカーの表示位置を設定する
-          title: name //タイトルに値を設定する
-        })
-
-        const infoWindow = new google.maps.InfoWindow({
-          //map: map, //表示している地図を指定する
-          position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
-          content: `
-          <div>${name}</div>
-          <div>${place}</div>
-          <div>${date}</div>
-          <div>${time}時台</div>
-          <div>${remarks}</div>`,
-          pixelOffset: new google.maps.Size(0, -50)
-        })
-
-        //マーカーをクリックしたら情報ウィンドウを開く
-        marker.addListener('click', () => {
-          infoWindow.open(map)
-        })
-
-        const circle = new google.maps.Circle({
-          map: map,
-          center: latlng,
-          radius: 90,
-          fillColor: `${color}`,
-          strokeColor: `${color}`
-        })
-      }
-    }
-  }
-  req.open('GET', '../../openData.json', true)
-
-  req.send()
+      allSpot.userDangerousSpotOpen = data //userデータを格納
+      setMarker(data.openData, map, 0)
+    })
+    .catch((err) => {
+      console.log(err)
+    })
 }
 
 // ルート検索からの遷移か確認する。
@@ -256,10 +152,8 @@ const checkDirectionParam = (map) => {
   }
 }
 
-/**
- * @function directionMap 現在位置から指定位置までの道順を表示する。
- * @see https://softauthor.com/google-maps-directions-service/
- */
+// 現在位置から指定位置までの道順を表示する。
+// see https://softauthor.com/google-maps-directions-service/
 const directionMap = (origin, destination, map) => {
   const directionsService = new google.maps.DirectionsService()
   directionsRenderer.setMap(map)
@@ -281,8 +175,8 @@ const directionMap = (origin, destination, map) => {
   map.setCenter(origin)
 }
 
+// 現在地と危険地との距離を計測する。
 const calcDistance = (position) => {
-  console.log('距離を測るよ！')
   let distance = []
   const currentPosition = position
   const spot = allSpot.userDangerousSpotOpen.userPosts
@@ -292,29 +186,108 @@ const calcDistance = (position) => {
       currentPosition,
       position
     )
-    console.log(distance[i], distance[i] < 100)
     if (distance[i] < 100) {
-      console.log('条件に当てはまったよ！！')
       sendPushNotification()
     }
   }
 }
 
-/**
- * push
- * 危険範囲に入ったら発火
- * push通知を送る
- * @see
- */
+//危険区域に近づいたら通知を行う。
 const sendPushNotification = () => {
-  console.log('push通知が発火された！！')
   Push.create('危険予防マップ', {
     body: '危険な区域に近づきました。周りに注意してください。',
-    // icon: 'publicsrcimagessample.png',
+    icon: './src/images/icons8-google-maps-48.png',
     timeout: 5000,
     onClick: () => {
       this.close()
       location.href = '/'
     }
   })
+}
+
+// markerを削除する
+const deleteMakers = (idx = null) => {
+  if (idx == null) {
+    //生成済マーカーを順次すべて削除する
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(null)
+      circles[i].setMap(null)
+    }
+    markers = [] //参照を開放
+    circles = [] //参照を開放
+  } else {
+    //生成済マーカーからID指定されたmarker, circleを削除
+    for (var i = 0; i < markers.length; i++) {
+      if (idx.indexOf(i) >= 0) {
+        markers[i].setMap(null)
+        circles[i].setMap(null)
+      }
+    }
+  }
+}
+
+// makerを表示する。
+const setMarker = (data, map, colorNum) => {
+  // markerの色表示
+  // 0 : userdata, 1 : opendata
+  let colorKey = colorNum === 0 ? 'userDataColor' : 'openDataColor'
+  let getColor = localStorage.getItem(colorKey)
+  let color
+  getColor !== null ? (color = getColor) : (color = '#000')
+
+  for (let i = 0; i < data.length; i++) {
+    const name = data[i].name //タイトル
+    const place = data[i].place // 場所
+    const date = data[i].date // 日付、日時
+    const time = data[i].time // 時間帯
+    const remarks = data[i].remarks //備考
+    const lat = data[i].lat // 緯度
+    const lng = data[i].lng // 軽度
+
+    // マーカーの表示
+    const marker = new google.maps.Marker({
+      map: map, //表示している地図を指定する
+      position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
+      title: name //タイトルに値を設定する
+    })
+
+    const infoWindow = new google.maps.InfoWindow({
+      position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
+      content: `
+      <div>件名：${name}</div>
+      <div>場所：${place}</div>
+      <div>日時：${date}</div>
+      <div>時間：${time}時台</div>
+      <div>備考：${remarks}</div>`,
+      pixelOffset: new google.maps.Size(0, -50)
+    })
+
+    //マーカーをクリックしたら情報ウィンドウを開く
+    marker.addListener('click', () => {
+      infoWindow.open(map)
+    })
+
+    const circle = new google.maps.Circle({
+      map: map,
+      center: new google.maps.LatLng(lat, lng),
+      // 以下からオプション値
+      radius: 90,
+      fillColor: `${color}`,
+      strokeColor: `${color}`
+    })
+
+    // markersに格納
+    markers.push(marker)
+    circles.push(circle)
+  }
+}
+
+// フィルタリングされたオープンデータの情報を表示
+const filterPoint = (filterYear) => {
+  // 現在表示されているmarkerの削除
+  deleteMakers()
+  let opUrl = getOpenDataUrl + '/' + filterYear
+  let usUrl = getUserPostUrl + '/' + filterYear
+  getOpenData(opUrl, syncerWatchPosition.map)
+  getUserPost(usUrl, syncerWatchPosition.map)
 }

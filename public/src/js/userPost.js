@@ -1,12 +1,3 @@
-/**
- * @function initMap mapの初期化処理
- * @param latLng 地図の中心位置を指定
- * @param options 地図の表示設定
- * @param map mapクラスのインスタンス
- * @param circle 円の表示
- * @param marker マーカーとタイトルの表示
- */
-
 var initMap = () => {
   console.log('init map')
   navigator.geolocation.getCurrentPosition((currentPoition) => {
@@ -18,6 +9,7 @@ var initMap = () => {
       zoom: 15, //地図の縮尺値を設定する
       center: currentlatlng //地図の中心座標を設定する
     }
+    // map情報の格納
     const mapConf = new google.maps.Map(document.getElementById('map'), options)
     const marker = new google.maps.Marker({
       map: mapConf,
@@ -31,18 +23,18 @@ var initMap = () => {
 
 // マップ上のクリックした個所のlatlngを取得する。
 function init(mapConf) {
-  console.log(mapConf)
   mapConf.addListener('click', (e) => {
-    setTimeout(() => {
-      console.log(e.latLng.lat())
-      console.log(e.latLng.lng())
-      getAddress(e.latLng)
-      const lat = document.querySelector('#lat')
-      const lng = document.querySelector('#lng')
-      lat.value = e.latLng.lat()
-      lng.value = e.latLng.lng()
-      getToday()
-    }, 1500)
+    getAddress(e.latLng)
+    const lat = document.querySelector('#lat')
+    const lng = document.querySelector('#lng')
+    lat.value = e.latLng.lat()
+    lng.value = e.latLng.lng()
+  })
+  const date = document.querySelector('#date')
+  const year = document.querySelector('#year')
+  date.addEventListener('change', () => {
+    const str = date.value.substr(0, 4)
+    year.value = str
   })
 }
 
@@ -72,17 +64,4 @@ const getAddress = (latlng) => {
       }
     }
   )
-}
-
-/**
- * 今日の日付を取得する
- * @see https://wakalog.hatenadiary.jp/entry/2017/10/25/104040
- */
-const getToday = () => {
-  var today = new Date()
-  today.setDate(today.getDate())
-  var yyyy = today.getFullYear()
-  var mm = ('0' + (today.getMonth() + 1)).slice(-2)
-  var dd = ('0' + today.getDate()).slice(-2)
-  document.querySelector('#date').value = yyyy + '-' + mm + '-' + dd
 }

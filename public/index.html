@@ -43,15 +43,36 @@
       </div>
     </div>
   </header>
+
   <main class="indexMain">
     <section class="section-map">
+      <div class="dropdown fillter-button">
+
+        <button type="button" class="btn btn-secondary btn-lg dropdown-toggle" id="filterDropdownMenu"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fa-solid fa-filter fa-lg"></i>
+        </button>
+
+        <form action="" method="get">
+          <ul class="dropdown-menu" aria-labelledby="filterDropdownMenu">
+            <li class="dropdown-item" onclick="filterPoint('2018')"> 2018年</li>
+            <li class="dropdown-item" onclick="filterPoint('2019')"> 2019年</li>
+            <li class="dropdown-item" onclick="filterPoint('2020')"> 2020年</li>
+            <li class="dropdown-item" onclick="filterPoint('2021')"> 2021年</li>
+            <li class="dropdown-item" onclick="filterPoint('2022')"> 2022年</li>
+            <li class="dropdown-item" onclick="filterPoint('2023')"> 2023年</li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li class="dropdown-item" onclick="init()"> 全部</li>
+          </ul>
+        </form>
+
+      </div>
       <div id="map">
       </div>
     </section>
   </main>
-
-  
-  
 
   <!-- footer -->
   <footer class="d-block d-sm-none fixed-bottom">
@@ -89,25 +110,24 @@
       </ul>
     </nav>
   </footer>
-  
+
   <!-- push -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/push.js/1.0.12/push.min.js"></script>
-  <!-- bootstrap -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+  <!-- jquery -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
+    integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
     crossorigin="anonymous"></script>
+  <!-- bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
     integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
     crossorigin="anonymous"></script>
-    <!-- jquery -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.min.js"
-    integrity="sha384-cuYeSxntonz0PPNlHhBs68uyIAVpIIOZZ5JqeqvYYIcEL727kskC66kF92t6Xl2V"
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
     crossorigin="anonymous"></script>
   <!-- map -->
   <script defer src="./src/js/index.js"></script>
   <script defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0mNC8boGeHcP2uxLz8c46i5DSe7TC99I&language=ja&callback=initMap"></script>
-   
 </body>
 
 </html>
