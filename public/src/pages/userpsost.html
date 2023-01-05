@@ -119,10 +119,12 @@
               <!-- ドロップダウンメニュー -->
               <div class="input-group mb-3">
                 <label class="input-group-text" for="inputGroupSelect01">件名</label>
-                <select class="form-select" id="subject" name="subject" required>
+                <select class="form-select" id="subject" name="name" required>
                   <option selected disabled value="">選択</option>
                   <option value="ひったくり">ひったくり</option>
                   <option value="ストーカー">ストーカー</option>
+                  <option value="不審者">不審者</option>
+                  <option value="その他">その他</option>
                 </select>
               </div>
               <!-- 日時 -->
@@ -131,15 +133,24 @@
                 <input type="datetime-local" id="date" class="form-control" aria-label="Sizing example input"
                   aria-describedby="inputGroup-sizing-default" name="date" required>
               </div>
+              <!-- 発生時間帯 -->
+              <div class="input-group input-group mb-3">
+                <span class="input-group-text" id="inputGroup-sizing-default">発生時間帯</span>
+                <input type="datetime-local" id="date" class="form-control" aria-label="Sizing example input"
+                  aria-describedby="inputGroup-sizing-default" name="time" required>
+              </div>
               <!-- 場所 -->
               <div class="input-group input-group mb-3">
                 <span class="input-group-text" id="inputGroup-sizing-default">場所</span>
                 <input type="text" id="place" class="form-control" aria-label="Sizing example input"
                   aria-describedby="inputGroup-sizing-default" name="place" required>
               </div>
-              <!-- トークン -->
+              <!-- 緯度経度 -->
               <p><input id="lat" type="hidden" name="lat" required></p>
               <p><input id="lng" type="hidden" name="lng" required></p>
+              <!-- 年だけ取得 -->
+              <p><input id="year" type="hidden" name="year" required></p>
+
               <!-- 備考 -->
               <div class="input-group">
                 <span class="input-group-text">備考</span>
@@ -157,7 +168,7 @@
       </div>
     </div>
   </div>
-  
+
   <!-- bootstrap -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
