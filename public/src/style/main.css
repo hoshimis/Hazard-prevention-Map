@@ -1,3 +1,5 @@
+/* 全体 */
+
 html {
   height: 100%;
   margin: 0;
@@ -22,34 +24,40 @@ body {
 }
 
 /* index.html */
-.indexMain {
-  height: 100%;
-  width: 100%;
-  margin-top: 2%;
+.fillter-button {
+  top: 7%;
+  right: 3%;
 }
 
-.section-map {
-  position: absolute;
-  height: 100%;
-  width: 100%;
+/* settings.html */
+
+/* routes.html */
+.section-serchMap {
+  margin-top: 5rem;
 }
-.fillter-button {
-  position: relative;
-  top: 15%;
-  right: -90%;
-  z-index: 100;
-}
-#map {
+.section-routeMap {
   height: 100%;
-  width: 100%;
-  border-radius: 20px;
+  margin: 0 2.5rem;
+}
+@media only screen and (max-width: 600px) {
+  .section-routeMap {
+    height: 50%;
+    margin: 0;
+  }
 }
 
 /* ↓userpost.html */
 .section-userpostMap {
   height: 100%;
+  margin: 0 2.5rem;
 }
 
+@media only screen and (max-width: 600px) {
+  .section-userpostMap {
+    height: 70%;
+    margin: 0;
+  }
+}
 /* ↓footer */
 @import url('https://fonts.googleapis.com/css?family=Poppins:100,200,300,400,500,600,700,800,900');
 
@@ -148,7 +156,7 @@ footer {
   transition: 0.5s;
 }
 
-.indicator::before {
+/* .indicator::before {
   content: '';
   position: absolute;
   top: 60%;
@@ -169,7 +177,7 @@ footer {
   border-top-left-radius: 20px;
   background: transparent;
   box-shadow: -1px -10px 0 0 var(--bgc);
-}
+} */
 
 .navigation ul li:nth-child(1).active ~ .indicator {
   transform: translateX(calc(80px * 0));
