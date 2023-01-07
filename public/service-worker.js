@@ -1,3 +1,5 @@
+'use strict'
+
 /**
  * @brief add serviceworkerの全体説明
  * @desc スコープはサービスワーカーが存在する階層が勝手に指定される
@@ -15,27 +17,25 @@
  * @param STATIC_FILES キャッシュで保存するリソースの指定
  */
 
-const VERSION = '1'
-const CACHE_NAME = 'chace-' + VERSION
-// const ORIGIN = process.env.ORIGIN
+const CACHE_NAME = 'chace-2'
 const ORIGIN = 'https://test-pwa-5ae30.web.app/'
-const STATIC_FILES = [
-  ORIGIN + '/',
-  ORIGIN + '/index.html',
-  ORIGIN + './src/styles/main.css'
+const urlsToCache = [
+  './',
+  './index.html',
+  './src/pages/routes.html',
+  './src/pages/settings.html',
+  './src/pages/userpost.html',
+  './src/js/route.js',
+  './src/js/setttings.js',
+  './src/js/userpost.js',
+  './src/styles/main.css',
+  './src/styles/reboot.css'
 ]
 self.addEventListener('install', (e) => {
   e.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return Promise.all(
-        STATIC_FILES.map((url) => {
-          return fetch(
-            new Request(url, { cache: 'no-cache', mode: 'no-cors' })
-          ).then((response) => {
-            return cache.put(url, response)
-          })
-        })
-      )
+      // 指定されたリソースをキャッシュに追加する
+      return cache.addAll(urlsToCache)
     })
   )
 })
@@ -50,23 +50,19 @@ self.addEventListener('install', (e) => {
  * 4.新しいキャッシュ名に変更されて、昔のキャッシュは削除される。
  */
 self.addEventListener('activate', (e) => {
+  let cacheWhitelist = [CACHE_NAME]
+
   e.waitUntil(
-    caches
-      .keys()
-      .then((cacheNames) => {
-        return cacheNames.filter((cacheName) => {
-          // CACHE_NAMEではないキャッシュを探す
-          return cacheName !== CACHE_NAME
-        })
-      })
-      .then((cachesToDelete) => {
-        return Promise.all(
-          cachesToDelete.map((cacheName) => {
-            // 不要なキャッシュの削除
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          // ホワイトリストにないキャッシュ(古いキャッシュ)は削除する
+          if (cacheWhitelist.indexOf(cacheName) === -1) {
             return caches.delete(cacheName)
-          })
-        )
-      })
+          }
+        })
+      )
+    })
   )
 })
 
@@ -78,11 +74,6 @@ self.addEventListener('activate', (e) => {
  *
  */
 self.addEventListener('fetch', (e) => {
-  // POSTの場合はキャッシュを使用しない
-  if ('POST' === e.request.method) {
-    return
-  }
-
   e.respondWith(
     caches.match(e.request).then((response) => {
       // キャッシュ内に該当レスポンスがあれば、それを返す
@@ -103,6 +94,7 @@ self.addEventListener('fetch', (e) => {
         // ブラウザ用とキャッシュ用の2回必要。なので clone して
         // 2つの Stream があるようにする
         let responseToCache = response.clone()
+
         caches.open(CACHE_NAME).then((cache) => {
           cache.put(e.request, responseToCache)
         })

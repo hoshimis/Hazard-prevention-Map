@@ -1,10 +1,20 @@
 {
-  "name": "sampe",
-  "short_name": "sample",
+  "name": "app title",
+  "short_name": "app",
+  "description": "危険予防マップ",
+  "start_url": "/public/index.html",
+  "display": "standalone",
+  "lang": "ja",
+  "dir": "auto",
+  "orientation": "any",
   "theme_color": "#2196f3",
   "background_color": "#2196f3",
-  "display": "standalone",
+  "icons": [
+    {
+      "src": "./src/images/icons8-google-maps-48.svg",
+      "sizes": "72x72"
+    }
+  ],
   "scope": "/public",
-  "start_url": "/public/index.html",
   "gcm_sender_id": "103953800507"
 }
