@@ -155,18 +155,23 @@ const checkDirectionParam = (map) => {
 // 現在位置から指定位置までの道順を表示する。
 // see https://softauthor.com/google-maps-directions-service/
 const directionMap = (origin, destination, map) => {
+  // DirectionServiceオブジェクトを生成
   const directionsService = new google.maps.DirectionsService()
   directionsRenderer.setMap(map)
-  const directionsRenderer = new google.maps.DirectionsRenderer()
-  directionsRenderer.setMap(map)
+
+  // 距離計算のdirectionRequest オブジェクトを作成
   directionsService.route(
     {
-      origin: origin,
-      destination: destination,
+      origin: origin, // 出発地
+      destination: destination, // 目的地
+      waypoints: [{}], // 経由地点
       travelMode: 'WALKING' // 固定
     },
     (response, status) => {
       if (status === 'OK') {
+        // ルートが見つかった場合は、DirectionsRenderer オブジェクトを使って地図上に表示します
+        const directionsRenderer = new google.maps.DirectionsRenderer()
+        directionsRenderer.setMap(map)
         //directionsRenderer と地図を紐付け
         directionsRenderer.setDirections(response)
       }
@@ -291,3 +296,8 @@ const filterPoint = (filterYear) => {
   getOpenData(opUrl, syncerWatchPosition.map)
   getUserPost(usUrl, syncerWatchPosition.map)
 }
+
+// Service Worker 登録
+navigator.serviceWorker
+  .register('./../../service-worker.js')
+  .catch(console.error.bind(console))
