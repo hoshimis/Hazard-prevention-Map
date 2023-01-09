@@ -1,3 +1,5 @@
+'use strict'
+
 const getUserPostUrl = 'http://localhost:5000/getuserpost'
 const getOpenDataUrl = 'http://localhost:5000/getopendata'
 
@@ -86,7 +88,6 @@ function init(mapConf = syncerWatchPosition.map) {
   getUserPost(getUserPostUrl, mapConf)
   // オープンデータ情報の取得
   getOpenData(getOpenDataUrl + '/' + 'All', mapConf)
-  console.log(mapConf)
   // ルート検索から遷移された場合
   checkDirectionParam(mapConf)
 }
@@ -140,31 +141,41 @@ const getOpenData = (url, map) => {
 // ルート検索からの遷移か確認する。
 const checkDirectionParam = (map) => {
   // URLを取得
-  const url = new URL(window.location.href)
+  const url = new URL(location.href)
   const params = url.searchParams
 
-  const origin = params.get('origin')
-  const destination = params.get('destination')
-
+  const data = {
+    origin: params.get('origin'),
+    destination: params.get('destination'),
+    waypoints: params.get('via')
+  }
   // ルート検索から遷移されていたら、ルート検索が実行される。
-  if (origin !== null && destination !== null) {
-    directionMap(origin, destination, map)
+  if (data.origin !== null && data.destination !== null) {
+    directionMap(data, map)
   }
 }
 
 // 現在位置から指定位置までの道順を表示する。
 // see https://softauthor.com/google-maps-directions-service/
-const directionMap = (origin, destination, map) => {
+const directionMap = (data, map) => {
   // DirectionServiceオブジェクトを生成
   const directionsService = new google.maps.DirectionsService()
-  directionsRenderer.setMap(map)
-
+  console.log(data.waypoints)
+  let arr = data.waypoints.replace('/"', '"').split('★')
+  console.log(arr)
+  // console.log(JSON.parse(arr))
+  let waypoints = new Array()
+  arr.map((data) => {
+    waypoints.push(JSON.parse(data))
+  })
+  console.log()
   // 距離計算のdirectionRequest オブジェクトを作成
   directionsService.route(
     {
-      origin: origin, // 出発地
-      destination: destination, // 目的地
-      waypoints: [{}], // 経由地点
+      origin: data.origin, // 出発地
+      destination: data.destination, // 目的地
+      waypoints: waypoints, // 経由地点
+      optimizeWaypoints: true, // 経由地点を最適化する
       travelMode: 'WALKING' // 固定
     },
     (response, status) => {
@@ -177,7 +188,7 @@ const directionMap = (origin, destination, map) => {
       }
     }
   )
-  map.setCenter(origin)
+  // map.setCenter(data.origin)
 }
 
 // 現在地と危険地との距離を計測する。
@@ -251,9 +262,9 @@ const setMarker = (data, map, colorNum) => {
 
     // マーカーの表示
     const marker = new google.maps.Marker({
-      map: map, //表示している地図を指定する
-      position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
-      title: name //タイトルに値を設定する
+      map: map, // 表示している地図を指定する
+      position: new google.maps.LatLng(lat, lng), // マーカーの表示位置を設定する
+      title: name // タイトルに値を設定する
     })
 
     const infoWindow = new google.maps.InfoWindow({
