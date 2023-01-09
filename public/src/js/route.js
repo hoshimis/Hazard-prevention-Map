@@ -3,12 +3,20 @@
 const getUserPostUrl = 'http://localhost:5000/getuserpost'
 const getOpenDataUrl = 'http://localhost:5000/getopendata'
 
+document.querySelector('.clear-origin').addEventListener('click', () => {
+  clear('origin')
+})
+document.querySelector('.clear-destination').addEventListener('click', () => {
+  clear('destination')
+})
+
 // 現在地点に関する変数
 let syncerWatchPosition = {
   count: 0,
   lastTime: 0,
   map: null,
-  marker: null
+  marker: null,
+  currentPosition: null
 }
 
 // 危険地域と通知に関する変数
@@ -80,7 +88,7 @@ const successGetCurrentPosition = (position) => {
     // マーカーの場所を変更
     syncerWatchPosition.marker.setPosition(currentLatlng)
   }
-
+  syncerWatchPosition.currentPosition = currentLatlng
   init(syncerWatchPosition.map)
 }
 
@@ -253,9 +261,10 @@ const addViaMaker = (event) => {
 
 // クリックしたmarkerの地点をwatpointに格納する。
 const getWayPoint = () => {
-  console.log('ここの処理が流れるよ！！')
   // index.htmlに渡す値
   const via = document.querySelector('#via')
+  const lat = document.querySelector('#lat')
+  const lng = document.querySelector('#lng')
 
   // 経由地点を格納する配列
   let waypoints = []
@@ -267,12 +276,48 @@ const getWayPoint = () => {
     let point = {}
     point.location = `${lat}, ${lng}`
 
-    console.log(point)
     // 経由地点を配列に格納する。
     let tmp = JSON.stringify(point)
     waypoints.push(tmp)
   })
   via.value = waypoints.join('★')
-  console.log(via.value)
-  console.log(via.value.split('★'))
+
+  lat.value = syncerWatchPosition.currentPosition.lat()
+  lng.value = syncerWatchPosition.currentPosition.lng()
+}
+
+const clear = (target) => {
+  let el = document.querySelector(`#${target}`)
+  el.value = ''
+}
+
+// 現在地を取得する関数
+const getCurrentPosition = () => {
+  getAddress(syncerWatchPosition.currentPosition)
+}
+
+// タップした個所の緯度経度から住所に変換する
+const getAddress = (latlng) => {
+  const geocoder = new google.maps.Geocoder()
+  // 第１引数はGeocoderRequest。緯度経度⇒住所の変換時はlatLngプロパティを入れればOK。
+  // 第２引数はコールバック関数。
+  geocoder.geocode(
+    {
+      latLng: latlng
+    },
+    function (results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+        // results.length > 1 で返ってくる場合もありますが・・・。
+        if (results[0].geometry) {
+          // 住所を取得(日本の場合だけ「日本、」を削除)
+          const address = results[0].formatted_address.replace(
+            /^日本、〒\d{3}-\d{4}/,
+            ''
+          )
+          let origin = document.querySelector('#origin')
+          origin.value = address
+        }
+      }
+    }
+  )
 }

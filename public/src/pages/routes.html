@@ -57,28 +57,40 @@
         <form action="../../index.html" method="get">
           <div class="content-input">
             <!-- 現在地 -->
-            <div id="currentAddressHelp" class="form-text">現在地は自動で入力されます。</div>
+            <div id="currentAddressHelp" class="form-text">出発地</div>
             <div class="input-group input-group mb-3">
-              <span class="input-group-text" id="inputGroup-sizing-default">現在地</span>
+              <span class="input-group-text" id="inputGroup-sizing-default">出発地</span>
               <input type="text" id="origin" class="form-control" aria-describedby="currentAddressHelp" name="origin">
+
+            </div>
+
+            <!-- 現在地の入力制御ボタン -->
+            <div class="originButtonGroup float-end">
+              <button type="button" class="btn btn-primary mb-3" onclick="getCurrentPosition()">現在地を入力</button>
+              <button type="button" class="btn btn-secondary mb-3 clear-origin">リセット</button>
             </div>
 
             <!-- 目的地 -->
-            <div id="targetAddressHelp" class="form-text">目的地を入力してください。下記のマップからも選択できます。</div>
+            <div id="targetAddressHelp" class="form-text mt-5">目的地を入力してください。下記のマップからも選択できます。</div>
             <div class="input-group input-group mb-3">
               <span class="input-group-text" id="inputGroup-sizing-default">目的地</span>
               <input type="text" id="destination" class="form-control" aria-label="Sizing example input"
                 aria-describedby="targetAddressHelp" name="destination">
             </div>
 
-            <!-- 緯度、経度 -->
+            <!-- 目的地の入力制御ボタン -->
+            <div class="destinationButtonGroup float-end">
+              <button type="button" class="btn btn-secondary mb-3 clear-destination">リセット</button>
+            </div>
+
+            <!-- lat,lng -->
             <p><input id="lat" type="hidden" name="lat"></p>
             <p><input id="lng" type="hidden" name="lng"></p>
+
             <!-- 経由地点 -->
-            <p><input id="via" type="text" name="via"></p>
+            <p><input id="via" type="hidden" name="via"></p>
           </div>
-          <button type="button" class="btn btn-primary" onclick="getWayPoint()">検索</button>
-          <button type="submit" class="btn btn-primary" onclick="getWayPoint()">送信</button>
+          <button type="submit" class="btn btn-primary mt-5" onclick="getWayPoint()">送信</button>
         </form>
         <hr />
       </div>

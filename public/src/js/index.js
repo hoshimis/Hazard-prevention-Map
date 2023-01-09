@@ -130,7 +130,7 @@ const getOpenData = (url, map) => {
     })
     .then((data) => {
       // JSON のデータ数分処理
-      allSpot.userDangerousSpotOpen = data //userデータを格納
+      allSpot.openDangerousSpot = data //userデータを格納
       setMarker(data.openData, map, 0)
     })
     .catch((err) => {
@@ -147,7 +147,9 @@ const checkDirectionParam = (map) => {
   const data = {
     origin: params.get('origin'),
     destination: params.get('destination'),
-    waypoints: params.get('via')
+    waypoints: params.get('via'),
+    lat: params.get('lat'),
+    lng: params.get('lng')
   }
   // ルート検索から遷移されていたら、ルート検索が実行される。
   if (data.origin !== null && data.destination !== null) {
@@ -160,21 +162,27 @@ const checkDirectionParam = (map) => {
 const directionMap = (data, map) => {
   // DirectionServiceオブジェクトを生成
   const directionsService = new google.maps.DirectionsService()
-  console.log(data.waypoints)
+
+  // text形式からオブジェクトの形に直す
   let arr = data.waypoints.replace('/"', '"').split('★')
-  console.log(arr)
-  // console.log(JSON.parse(arr))
   let waypoints = new Array()
   arr.map((data) => {
-    waypoints.push(JSON.parse(data))
+    try {
+      waypoints.push(JSON.parse(data))
+    } catch (error) {
+      waypoints = null
+    }
   })
-  console.log()
+
   // 距離計算のdirectionRequest オブジェクトを作成
   directionsService.route(
     {
-      origin: data.origin, // 出発地
+      origin: `${data.lat}, ${data.lng}`, // 出発地
       destination: data.destination, // 目的地
-      waypoints: waypoints, // 経由地点
+      waypoints:
+        waypoints === null
+          ? [{ location: `${data.lat}, ${data.lng}` }]
+          : waypoints, // 経由地点
       optimizeWaypoints: true, // 経由地点を最適化する
       travelMode: 'WALKING' // 固定
     },
@@ -188,14 +196,17 @@ const directionMap = (data, map) => {
       }
     }
   )
-  // map.setCenter(data.origin)
 }
 
 // 現在地と危険地との距離を計測する。
 const calcDistance = (position) => {
   let distance = []
   const currentPosition = position
-  const spot = allSpot.userDangerousSpotOpen.userPosts
+  let userSpot = new Array()
+  let openSpot = new Array()
+  userSpot = allSpot.userDangerousSpotOpen.userPosts
+  openSpot = allSpot.openDangerousSpot.openData
+  const spot = userSpot.concat(openSpot)
   for (let i = 0; i < spot.length; i++) {
     let position = new google.maps.LatLng(spot[i].lat, spot[i].lng)
     distance[i] = google.maps.geometry.spherical.computeDistanceBetween(
