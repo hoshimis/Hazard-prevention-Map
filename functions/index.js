@@ -44,6 +44,34 @@ app.post('/userpost', async (request, response) => {
 })
 
 // ユーザ投稿を取得するAPI
+app.get('/getuserpost/', async (request, response) => {
+  // クエリストリングの取得
+  const year = request.params.year
+  userPostRef
+    .get()
+    .then((snapshot) => {
+      let userPosts = []
+      let buff = { userPosts }
+      snapshot.forEach((doc) => {
+        let data = doc.data()
+        userPosts.push({
+          id: doc.id,
+          name: data.name,
+          place: data.place,
+          date: data.date,
+          time: data.time,
+          remarks: data.remarks,
+          lat: data.lat,
+          lng: data.lng
+        })
+      })
+      response.json(buff)
+    })
+    .catch((err) => {
+      console.log('Error getting documents', err)
+    })
+})
+// ユーザ投稿を取得するAPI
 app.get('/getuserpost/:year', async (request, response) => {
   // クエリストリングの取得
   const year = request.params.year
