@@ -2,6 +2,8 @@
 
 const getUserPostUrl = 'http://localhost:5000/getuserpost'
 const getOpenDataUrl = 'http://localhost:5000/getopendata'
+// const getUserPostUrl = 'https://test-pwa-5ae30.web.app/getuserpost'
+// const getOpenDataUrl = 'https://test-pwa-5ae30.web.app/getopendata'
 
 // 現在地点に関する変数
 let syncerWatchPosition = {
@@ -39,7 +41,7 @@ const successGetCurrentPosition = (position) => {
 
   // 前回の書き出しから3秒以上経過していたら描写
   // 毎回HTMLに書き出していると、ブラウザがフリーズするため
-  if (syncerWatchPosition.lastTime + 3 > nowTime) {
+  if (syncerWatchPosition.lastTime + 60 > nowTime) {
     return false
   }
   // 前回の時間を更新
@@ -177,11 +179,11 @@ const directionMap = (data, map) => {
   // 距離計算のdirectionRequest オブジェクトを作成
   directionsService.route(
     {
-      origin: `${data.lat}, ${data.lng}`, // 出発地
+      origin: data.origin, // 出発地
       destination: data.destination, // 目的地
       waypoints:
         waypoints === null
-          ? [{ location: `${data.lat}, ${data.lng}` }]
+          ? [{ location: `${data.lat}, ${data.lng}` }] // 配列が空の場合は現在地を出す。
           : waypoints, // 経由地点
       optimizeWaypoints: true, // 経由地点を最適化する
       travelMode: 'WALKING' // 固定
