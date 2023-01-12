@@ -60,22 +60,22 @@
             <div id="currentAddressHelp" class="form-text">出発地</div>
             <div class="input-group input-group mb-3">
               <span class="input-group-text" id="inputGroup-sizing-default">出発地</span>
-              <input type="text" id="origin" class="form-control" aria-describedby="currentAddressHelp" name="origin">
-
+              <input type="text" id="origin" class="form-control" aria-describedby="currentAddressHelp" name="origin"
+                required>
             </div>
 
             <!-- 現在地の入力制御ボタン -->
             <div class="originButtonGroup float-end">
-              <button type="button" class="btn btn-primary mb-3" onclick="getCurrentPosition()">現在地を入力</button>
+              <button type="button" class="btn btn-primary mb-3 input-current">現在地を入力</button>
               <button type="button" class="btn btn-secondary mb-3 clear-origin">リセット</button>
             </div>
 
             <!-- 目的地 -->
-            <div id="targetAddressHelp" class="form-text mt-5">目的地を入力してください。下記のマップからも選択できます。</div>
+            <div id="targetAddressHelp" class="form-text mt-5">目的地を入力してください。</div>
             <div class="input-group input-group mb-3">
               <span class="input-group-text" id="inputGroup-sizing-default">目的地</span>
               <input type="text" id="destination" class="form-control" aria-label="Sizing example input"
-                aria-describedby="targetAddressHelp" name="destination">
+                aria-describedby="targetAddressHelp" name="destination" required>
             </div>
 
             <!-- 目的地の入力制御ボタン -->
@@ -83,23 +83,33 @@
               <button type="button" class="btn btn-secondary mb-3 clear-destination">リセット</button>
             </div>
 
-            <!-- lat,lng -->
-            <p><input id="lat" type="hidden" name="lat"></p>
-            <p><input id="lng" type="hidden" name="lng"></p>
+            <!--orginのlat,lngを格納する -->
+            <p><input id="origin-lat" type="hidden" name="lat"></p>
+            <p><input id="origin-lng" type="hidden" name="lng"></p>
+
+            <!--destinationのlat,lngを格納する -->
+            <p><input id="destination-lat" type="hidden" name="lat"></p>
+            <p><input id="destination-lng" type="hidden" name="lng"></p>
 
             <!-- 経由地点 -->
             <p><input id="via" type="hidden" name="via"></p>
+
           </div>
-          <button type="submit" class="btn btn-primary mt-5" onclick="getWayPoint()">送信</button>
+
+          <!-- 検索ボタン -->
+          <div class="btnGroup">
+            <button type="submit" class="btn btn-primary mt-5 submit-button">検索</button>
+            <button type="button" class="btn btn-primary mt-5" data-bs-toggle="modal"
+              data-bs-target="#staticBackdrop">経由地点の作成</button>
+            <button type="button" class="btn btn-primary mt-5 clear-via">経由地点のリセット</button>
+          </div>
         </form>
         <hr />
       </div>
     </section>
 
-
-
     <!-- map -->
-    <section class="section-routeMap position-relative">
+    <section class="section-routeMap h-100 position-relative">
       <div class="dropdown fillter-button position-absolute  d-inline z-3">
 
         <button type="button" class="btn btn-secondary btn-lg dropdown-toggle" id="filterDropdownMenu"
@@ -164,22 +174,49 @@
   </footer>
 
 
-  <!-- bootstrap -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
-    crossorigin="anonymous"></script>
-  <!-- bootstrap -->
-  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
-    integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
-    crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
-    crossorigin="anonymous"></script>
+  <!-- モーダル -->
+  <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <!-- タイトル -->
+          <h5 class="modal-title" id="staticBackdropLabel">
+            危険域を回避したルートを作成
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
 
-  <!-- map -->
-  <script defer src="../js/route.js"></script>
-  <script defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0mNC8boGeHcP2uxLz8c46i5DSe7TC99I&language=ja&callback=initMap"></script>
+        <div class="modal-body">
+
+          <div>自分で危険な場所を回避したルートを作成することができます。</div>
+          <div class="mt-1"> 経由したいルートに地図をクリックしてピンをたてて下さい。</div>
+
+          <img src="../images/sample.png" alt="">
+          <div id="currentAddressHelp" class="form-text mt1"> 上の画像にアプリ画面を貼り付ける</div>
+
+        </div>
+        <div class="modal-footer">
+          <div class="btn-group">
+          </div>
+        </div>
+
+        <!-- bootstrap -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-kenU1KFdBIe4zVF0s0G1M5b4hcpxyD9F7jL+jjXkk+Q2h455rYXK/7HAuoJl+0I4"
+          crossorigin="anonymous"></script>
+        <!-- bootstrap -->
+        <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+          integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3"
+          crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-w76AqPfDkMBDXo30jS1Sgez6pr3x5MlQ1ZAGC+nuZB+EYdgRZgiwxhTBTkF7CXvN"
+          crossorigin="anonymous"></script>
+
+        <!-- map -->
+        <script defer src="../js/route.js"></script>
+        <script defer
+          src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA0mNC8boGeHcP2uxLz8c46i5DSe7TC99I&language=ja&callback=initMap"></script>
 </body>
 
 </html>
