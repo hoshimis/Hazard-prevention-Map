@@ -2,12 +2,28 @@
 
 const getUserPostUrl = 'http://localhost:5000/getuserpost'
 const getOpenDataUrl = 'http://localhost:5000/getopendata'
+// const getUserPostUrl = 'https://test-pwa-5ae30.web.app/getuserpost'
+// const getOpenDataUrl = 'https://test-pwa-5ae30.web.app/getopendata'
 
+// button要素に挙動を追加する。
 document.querySelector('.clear-origin').addEventListener('click', () => {
   clear('origin')
 })
 document.querySelector('.clear-destination').addEventListener('click', () => {
   clear('destination')
+})
+document.querySelector('.submit-button').addEventListener('click', () => {
+  getWayPoint()
+})
+document.querySelector('.input-current').addEventListener('click', () => {
+  getCurrentPosition()
+})
+document.querySelector('.clear-via').addEventListener('click', () => {
+  //生成済マーカーを順次すべて削除する
+  for (var i = 0; i < mapObj.markers.length; i++) {
+    mapObj.clickMarker[i].setMap(null)
+  }
+  mapObj.clickMarker = [] //参照を開放
 })
 
 // 現在地点に関する変数
@@ -26,15 +42,18 @@ let allSpot = {
   notoified: []
 }
 
-// marker-circleのオブジェクトを格納する
+// marker&circleのオブジェクトを格納する
 let mapObj = {
   // 生成したmarker%circleを格納する配列
   markers: [],
   circles: [],
   // クリックしたmarkerの位置を格納する。
-  clickMarker: []
+  clickMarker: [],
+  // ルート検索の結果を格納する
+  directionsRenderer: null
 }
 
+// マップの描画
 var initMap = () => {
   console.log('init map')
   let watchId = navigator.geolocation.watchPosition(
@@ -104,6 +123,44 @@ const init = (mapConf = syncerWatchPosition.map) => {
   // mapクリック時のイベントを追加
   mapConf.addListener('click', (e) => {
     addViaMaker(e)
+    // マップクリック時に距離を計算するようにする。
+    // markerが一個以上設置されていたら
+    // 要素の取得(現在地と目的地)
+    let originel = document.querySelector('#origin')
+    let destinationel = document.querySelector('#destination')
+    let origin = originel.value
+    let destination = destinationel.value
+
+    let data = {
+      origin: origin,
+      destination: destination
+    }
+
+    // 経由地点を格納する配列
+    let waypoints = []
+
+    mapObj.clickMarker.map((data) => {
+      let lat = data.getPosition().lat()
+      let lng = data.getPosition().lng()
+
+      let point = {}
+      point.location = `${lat}, ${lng}`
+
+      // 経由地点を配列に格納する。
+      waypoints.push(point)
+    })
+
+    data.waypoints = waypoints
+
+    // 個々のif文の書き方ダサいけど許してください
+    // 入力欄が埋まっている且つ経由地点を表示するマーカーが１つ以上あるとき
+    if (origin !== '' || destination !== '') {
+      if (mapObj.clickMarker.length >= 1) {
+        console.log('ルートを表示するよ。')
+        console.log(data.waypoints)
+        directionMap(data)
+      }
+    }
   })
 }
 
@@ -196,7 +253,8 @@ const setMarker = (data, map, colorNum) => {
     const marker = new google.maps.Marker({
       map: map, //表示している地図を指定する
       position: new google.maps.LatLng(lat, lng), //マーカーの表示位置を設定する
-      title: name //タイトルに値を設定する
+      title: name, //タイトルに値を設定する
+      optimized: true
     })
 
     const infoWindow = new google.maps.InfoWindow({
@@ -230,7 +288,39 @@ const setMarker = (data, map, colorNum) => {
   }
 }
 
-// TODO：全件指定もできるようにする。
+// 現在位置から指定位置までの道順を表示する。
+// see https://softauthor.com/google-maps-directions-service/
+const directionMap = (data) => {
+  // DirectionServiceオブジェクトを生成
+  const directionsService = new google.maps.DirectionsService()
+  // 前回のルート表示を削除する
+  if (mapObj.directionsRenderer !== null) {
+    mapObj.directionsRenderer.setMap(null)
+  } else {
+    mapObj.directionsRenderer = new google.maps.DirectionsRenderer()
+  }
+
+  // 距離計算のdirectionRequest オブジェクトを作成
+  directionsService.route(
+    {
+      origin: data.origin, // 出発地
+      destination: data.destination, // 目的地
+      waypoints: data.waypoints,
+      optimizeWaypoints: true, // 経由地点を最適化する
+      travelMode: 'WALKING' // 固定
+    },
+    (response, status) => {
+      if (status === 'OK') {
+        // ルートが見つかった場合は、DirectionsRenderer オブジェクトを使って地図上に表示します
+        // 描画するマップを設定する。
+        mapObj.directionsRenderer.setMap(syncerWatchPosition.map)
+        //directionsRenderer と地図を紐付け
+        mapObj.directionsRenderer.setDirections(response)
+      }
+    }
+  )
+}
+
 // フィルタリングされたオープンデータの情報を表示
 const filterPoint = (filterYear) => {
   // 現在表示されているmarkerの削除
@@ -241,11 +331,12 @@ const filterPoint = (filterYear) => {
   getUserPost(usUrl, syncerWatchPosition.map)
 }
 
-// markerをドラッグ可能にする。
 // クリックした地点にclickMarkerを表示させる
 const addViaMaker = (event) => {
   // marker作成
-  var marker = new google.maps.Marker()
+  var marker = new google.maps.Marker({
+    draggable: true // ドラッグができるようになる
+  })
   // markerの位置を設定
   // event.latLng.lat()でクリックしたところの緯度を取得
   marker.setPosition(
@@ -263,8 +354,10 @@ const addViaMaker = (event) => {
 const getWayPoint = () => {
   // index.htmlに渡す値
   const via = document.querySelector('#via')
-  const lat = document.querySelector('#lat')
-  const lng = document.querySelector('#lng')
+  const originLat = document.querySelector('#origin-lat')
+  const originLng = document.querySelector('#origin-lng')
+  const destinationLat = document.querySelector('#origin-lat')
+  const destinationLng = document.querySelector('#origin-lng')
 
   // 経由地点を格納する配列
   let waypoints = []
@@ -281,11 +374,9 @@ const getWayPoint = () => {
     waypoints.push(tmp)
   })
   via.value = waypoints.join('★')
-
-  lat.value = syncerWatchPosition.currentPosition.lat()
-  lng.value = syncerWatchPosition.currentPosition.lng()
 }
 
+// 入力を削除する。
 const clear = (target) => {
   let el = document.querySelector(`#${target}`)
   el.value = ''
